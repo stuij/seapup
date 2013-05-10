@@ -1,0 +1,5 @@
+to be able to run hunchentoot as non-root:
+
+You gotta set sbcl as a program that can bind to -1028 ports
+> apt-get install libcap2-bin
+> setcap 'cap_net_bind_service=+ep' /usr/local/bin/sbcl
