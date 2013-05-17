@@ -59,16 +59,11 @@ $.extend_if_has = function(desc, source, array) {
             term.echo("you don't set eval for tilda");
         };
         var settings = {
-            prompt: 'tilda> ',
+            prompt: 'tilda>',
             name: 'tilda',
             height: 100,
             enabled: false,
-            greetings: 'Quake like console',
-            keypress: function(e) {
-                if (e.which == 96) {
-                    return false;
-                }
-            }
+            greetings: 'Quake like console'
         };
         if (options) {
             $.extend(settings, options);
@@ -80,6 +75,7 @@ $.extend_if_has = function(desc, source, array) {
         $(document.documentElement).keypress(function(e) {
             if (e.which == 96) {
                 self.slideToggle('fast');
+                self.terminal.set_command('');
                 self.terminal.focus(focus = !focus);
                 self.terminal.attr({
                     scrollTop: self.terminal.attr("scrollHeight")

@@ -326,4 +326,4 @@
                     (string (reg-match (switch-viewpoint bindings)
                                        a-response))
                     (function (apply a-response bindings responses)))))
-      (format nil "<div class='eliza'>~A</div>" output))))
+      (format nil "~A" output))))

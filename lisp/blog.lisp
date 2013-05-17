@@ -2,13 +2,15 @@
 
 ;; general
 (defun blog ()
-  (let ((out ""))
+  (let* ((out ""))
     (loop for pos from 0 to 5
           do (setf out (concatenate 'string out
                                     (let ((post (nth pos *blog-posts*)))
                                       (if post
                                           (concatenate 'string "<br/>" (post-title post)))))))
-    out))
+    (format nil "The latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
+</br>
+~A" out)))
 
 (defparameter *blog-posts* '())
 
@@ -18,11 +20,12 @@
                          :test (lambda (path)
                                  (string-equal (pathname-type path) "post"))
                          :directories nil)
-  (sort *blog-posts* #'string-lessp :key (lambda (post)
-                                           (if (post-published post)
-                                               (post-published post)
-                                               (post-created post))))
-  *blog-posts*)
+  (setf *blog-posts*
+        (sort *blog-posts* #'string-greaterp :key (lambda (post)
+                                                 (if (post-published post)
+                                                     (post-published post)
+                                                     (post-created post)))))
+  nil)
 
 
 ;; post
@@ -48,7 +51,8 @@
 (defun parse-post-line (post line)
   (if (post-body post)
       (setf (post-body post)
-            (concatenate 'string (post-body post) line))
+            (concatenate 'string (post-body post) "
+</br>" line))
       (parse-post-item post line)))
 
 (defun parse-post-item (post line)

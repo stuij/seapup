@@ -4,7 +4,7 @@
  *|  __ / // // // // // _  // _// // / / // _  // _//     // //  \/ // _ \/ /
  *| /  / // // // // // ___// / / // / / // ___// / / / / // // /\  // // / /__
  *| \___//____ \\___//____//_/ _\_  / /_//____//_/ /_/ /_//_//_/ /_/ \__\_\___/
- *|           \/              /____/                              version {{VER}}
+ *|           \/              /____/                              version 0.4.21
  * http://terminal.jcubic.pl
  *
  * Licensed under GNU LGPL Version 3 license
@@ -22,7 +22,7 @@
  * Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
  * Available under the MIT License
  *
- * Date: {{DATE}}
+ * Date: Thu, 27 Sep 2012 14:21:53 +0000
  */
 
 /*
@@ -1654,7 +1654,7 @@
     // -----------------------------------------------------------------------
     // :: TERMINAL PLUGIN CODE
     // -----------------------------------------------------------------------
-    var version = '{{VER}}';
+    var version = '0.4.21';
     var copyright = 'Copyright (c) 2011-2012 Jakub Jankiewicz <http://jcubic.pl>';
     var version_string = 'version ' + version;
     //regex is for placing version string aligned to the right
@@ -1829,7 +1829,7 @@
         function draw_line(string) {
             string = typeof string === 'string' ? string : String(string);
             var div, i, len;
-            if (false) {
+            if (string.length > num_chars) {
                 // string can have line break
                 //var array = string.split('\n');
                 // TODO: the way it should work
@@ -1844,7 +1844,7 @@
                     }
                 }
             } else {
-                div = $('<div/>').html(string);
+                div = $('<div/>').html($.terminal.format(string));
             }
             output.append(div);
             div.width('100%');

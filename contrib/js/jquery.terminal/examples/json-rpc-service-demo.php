@@ -2,8 +2,6 @@
 
 require('json-rpc.php');
 
-if(function_exists('xdebug_disable')) { xdebug_disable(); }
-
 class Demo {
   static $login_documentation = "login to the server (return token)";
   public function login($user, $passwd) {
@@ -18,7 +16,7 @@ class Demo {
   }
 
   static $ls_documentation = "list directory if token is valid";
-  public function ls($token, $path = null) {
+  public function ls($token, $path) {
     if (strcmp(md5("demo:demo"), $token) == 0) {
       if (preg_match("/\.\./", $path)) {
         throw new Exception("No directory traversal Dude");

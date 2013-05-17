@@ -1,79 +1,56 @@
-/* stolen from jquery terminal */
+body, html
+{
+  font-family: helvetica;
+  background-color: #000;
+  color: #aaa;
+  }
 
-.eliza {
-   padding-bottom: 12px;
-}
+#output
+{ width: 730px;
+  margin-left: auto;
+  margin-right: auto;
+  border: none;
+  padding: 0 20px;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  }
 
-.terminal-output > div {
+.input
+{ position: fixed;
+  clear: both;
+  width: 100%;
+  height: 30px;
+  bottom: 0;
+  border: none;
+  padding: 10px 0 10px 0;
+  background-color: #000;
+  }
 
-}
+.input-form
+{ width: 730px;
+  margin-left: auto;
+  margin-right: auto;
+  border: none;
+  }
 
-.terminal .clipboard {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    opacity: 0.01;
-    filter: alpha(opacity = 0.01);
-    filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.01);
-    width: 2px;
-}
-.cmd > .clipboard {
-    position: fixed;
-}
-.terminal {
-    padding: 10px;
-    position: relative;
-    overflow: hidden;
-}
-.cmd {
-    padding: 0;
-    margin: 0;
-    height: 1.3em;
-}
-.terminal .terminal-output div {
-    display: block;
-}
-.terminal {
-    font-family: FreeMono, monospace;
-    color: #aaa;
-    background-color: #000;
-    font-size: 12px;
-    line-height: 14px;
-}
-.terminal .terminal-output div span {
-    display: inline-block;
-}
-.terminal .cmd span {
-    display: inline-block;
-}
-.terminal .cmd span.inverted {
-    background-color: #aaa;
-    color: #000;
-}
-.terminal div::-moz-selection, .terminal span::-moz-selection {
-    background-color: #aaa;
-    color: #000;
-}
-.terminal div::selection, .terminal span::selection {
-    background-color: #aaa;
-    color: #000;
-}
-.terminal .terminal-output div.error, .terminal .terminal-output div.error div {
-    color: red;
-}
-.tilda {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1100;
-}
-.clear {
-    clear: both;
-}
-.terminal a {
-    color: #0F60FF;
-}
-.terminal a:hover {
-    color: red;
-}
+.input-form *
+{ width:100%;
+  background-color: #000;
+  color: #aaa;
+  padding: 4px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: aaa;
+  font-family: inherit;
+  font-size: 1em;
+  }
+
+.eliza
+{
+  padding-bottom: 28px;
+  }
+
+.user
+{
+  padding-bottom: 12px;
+  }

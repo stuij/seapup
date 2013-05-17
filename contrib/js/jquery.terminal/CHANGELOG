@@ -1,29 +1,3 @@
-0.6.2     Fix arguments in object as eval, new option processArguments
-0.6.1     fix first echo (like greetings)
-0.6       fix formatting with links and emails and long lines
-          history is a list with command as last element
-          history have size
-          You can type more characters in reverse search if command not found
-          export/import
-          onResize event
-0.5.4     fix scroll when attaching terminal to body in non Webkit browsers
-0.5.3     level api function
-          Restore mask on pop
-          click out of terminal remove focus
-          CTRL+H CTRL+W
-          use selector as default name for the terminal
-0.5.2     fix entity in lines
-          add data-text attribute to formatting span
-0.5.1     function in push
-          allow to put braket in formatting (closed with escape)
-          print nested object in automatic rpc
-          terminal instance in login callback
-0.5       Tab completion work with callback function
-          Push command allow for objects
-          Add CTRL+G to cancel Reverse Search
-0.4.23    Fix Style
-0.4.22
-0.4.21    Small fixes
 0.4.20    Add exec, greetings, onClear, onBlur, onFocus, onTerminalChange
 0.4.19    add support for ANSI terminal formatting, fix cancelable ajax on
           CTRL+D, replace emails with link mailto, remove formatting processing

@@ -30,7 +30,7 @@ jQuery(document).ready(function($) {
                     term.echo('unknown command ' + command);
                 }
             }, {
-                prompt: 'test> ',
+                prompt: 'test>',
                 name: 'test'});
         } else if (command == "js") {
             term.push(function(command, term) {
@@ -40,14 +40,14 @@ jQuery(document).ready(function($) {
                 }
             }, {
                 name: 'js',
-                prompt: 'js> '});
+                prompt: 'js>'});
         } else if (command == 'mysql') {
             term.push(function(command, term) {
                 term.pause();
-                $.jrpc("mysql-rpc-demo.php",
-                       id++,
-                       "query",
-                       [command],
+                $.jrpc("mysql-rpc-demo.php", 
+                       id++, 
+                       "query", 
+                       [command], 
                        function(data) {
                            term.resume();
                            if (data.error) {
@@ -64,8 +64,8 @@ jQuery(document).ready(function($) {
                            }
                        },
                        function(xhr, status, error) {
-                           term.error('[AJAX] ' + status +
-                                      ' - Server reponse is: \n' +
+                           term.error('[AJAX] ' + status + 
+                                      ' - Server reponse is: \n' + 
                                       xhr.responseText);
                            term.resume();
                        });
@@ -73,16 +73,12 @@ jQuery(document).ready(function($) {
                 greetings: "This is example of using mysql from terminal\n\
 you are allowed to execute: select, insert, update and delete from/to table:\n\
     table test(integer_value integer, varchar_value varchar(255))",
-                prompt: "mysql> "});
+                prompt: "mysql>"});
         } else {
             term.echo("unknow command " + command);
         }
     }, {
-        greetings: "multiply terminals demo use help to see available commands",
-        onBlur: function() {
-            // prevent loosing focus
-            return false;
-        }
+        greetings: "multiply terminals demo use help to see available commands"
     });
 });
 
