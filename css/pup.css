@@ -5,6 +5,8 @@ body, html
   color: #aaa;
   }
 
+a {color:#fff; text-decoration: none;}
+
 #output
 { width: 730px;
   margin-left: auto;
@@ -14,6 +16,7 @@ body, html
   margin-top: 20px;
   margin-bottom: 40px;
   }
+
 
 .input
 { position: fixed;
@@ -34,7 +37,7 @@ body, html
   }
 
 .input-form *
-{ width:100%;
+{ width:90%;
   background-color: #000;
   color: #aaa;
   padding: 4px;

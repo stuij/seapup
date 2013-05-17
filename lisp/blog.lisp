@@ -7,7 +7,8 @@
           do (setf out (concatenate 'string out
                                     (let ((post (nth pos *blog-posts*)))
                                       (if post
-                                          (concatenate 'string "<br/>" (post-title post)))))))
+                                          (let ((title (post-title post)))
+                                            (concatenate 'string "<br/>_-" title "-__-" (concatenate 'string "blog post " title) "-_")))))))
     (format nil "The latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
 </br>
 ~A" out)))

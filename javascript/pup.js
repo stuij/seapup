@@ -1,3 +1,23 @@
+jQuery.extend(verge);
+
+var debug = true;
+
+if(typeof console === "undefined") {
+    var console = { log: function() { } };
+}
+
+var log = function () {
+    if(debug) {
+        console.log.apply(null, arguments);
+    }
+};
+
+var dbg = function () {
+    if(debug) {
+        console.debug.apply(null, arguments);
+    }
+};
+
 var pup = 
     (function ($) {
          // var
@@ -5,7 +25,7 @@ var pup =
 
          // fns
          var jrpc = function(url, id, method, params, success, error) {
-             console.log("rpc-ing");
+             log("rpc-ing");
              var request = JSON.stringify(
                  {'jsonrpc': '2.0', 'method': method,
                   'params': params, 'id': id});
@@ -75,37 +95,72 @@ var terminal =
              rpc = an_rpc;
              $in_input[0].focus();
              $in_form.submit(input_submit);
+             $("#padding").height($.viewportH());
+             scrollTo($("#top"));
          };
 
          var input_submit = function (e) {
-             var val = $in_input.val();
-             var id = rpc(val);
-             print_user(val, id);
-             $in_input.val("");
+             user_input($in_input.val());
+             $in_input.val("");             
              return false;
-             scrollTo("#top");
          };
 
-         var print_user = function (string, id) {
-             $out.append("<div class=user id='termId" + id + "'>> " 
-                         + string + "</div>");
-             scrollTo("termId" + id);
+         var user_input = function (msg) {
+             if(msg) {
+                 var id = rpc(msg);
+                 user_output(msg, id);                 
+             }
+         };
+
+         var user_output = function (string, id) {
+             var $msg = $("<div class='termSliver' id='termId" + id + "'>");
+             $msg.append("<div class=user'>> " 
+                         + massage_msg(string) + "</div>");
+             $out.append($msg);
+             massage_term_div($msg);
+             scrollTo($msg);
          };
 
          var print_result = function (json) {
-             _print_result(json.id, json.result);
+             output_result(json.id, json.result);
          };
 
-         var _print_result = function (id, string) {
-             $out.append("<div class=eliza>" + string + "</div>");
-             scrollTo("termId" + id);
-             $(".termClick").click(function(event){
-                                       event.preventDefault();
-                                       // Ajax here
-                                       return false; //for good measure
-                                   });
+         var output_result = function (id, string) {
+             var $div = $("#termId" + id);
+             $div.append("<div class=eliza>" +massage_msg(string) + "</div>");
+             massage_term_div($div);
+             scrollTo($div);
          };
 
+         var make_term_url = function (msg) {
+             var l = window.location;
+             return l.protocol + "//" + l.host + l.pathname + "#" + msg;  
+         };
+
+         var replace_regex_tokens = function (match, msg_name, msg_val, offset, string) {
+             var enc_msg = encodeURIComponent(msg_val);
+             var url = make_term_url(enc_msg);
+             return "<a class='termLink' href='" + url + "'>" 
+                 + msg_name + "</a>";
+         };
+
+         var term_click = function (e) {
+             e.preventDefault();
+             var msg = decode_hash(e.target.hash);
+             if(msg) {
+                 put_hash_msg(msg);
+                 user_input(msg);
+             }
+             return false; //for good measure
+         };
+
+         var massage_term_div = function ($div) {
+             $(".termLink", $div).click(term_click);
+         };
+
+         var massage_msg = function (msg) {
+             return msg.replace(/_-(.*?)-__-(.*?)-_/g, replace_regex_tokens);
+         };
 
          var pause = function () {
              
@@ -116,15 +171,41 @@ var terminal =
          };
 
          var error = function (id, string) {
-             _print_result(id, string);
+             output_result(id, string);
          };
 
          // helpers
-         function scrollTo(id){
+         var scrollTo = function ($elem){
              $("html,body").animate(
-                 { scrollTop: $("#"+id).offset().top},
+                 { scrollTop: $elem.offset().top},
                  "slow");
-         }
+         };
+
+         var get_hash_msg = function () { 
+             return decode_hash(window.location.hash);
+         };
+
+         var decode_hash = function (msg) {
+             return decodeURIComponent(msg.slice(1));
+         };
+
+         var put_hash_msg = function (msg) {
+             window.location.hash = encodeURIComponent(msg);
+         };
+
+         var ltrim = function () {
+             return this.replace(/^\s+/, '');
+         };
+
+         var rtrim = function () {
+             return this.replace(/\s+$/, '');
+         };
+
+         var trim = function () {
+             return this.ltrim().rtrim();
+         };
+
+
 
          // interface
          return {
