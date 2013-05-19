@@ -1,0 +1,35 @@
+- blog post dissimination: rank by year/tag
+- add comments to posts in backend
+- trim strings and whitespace from input before processing
+- hunchentoot output feedback to repl when firing form web-page
+- import underbelly posts
+- click a link: focus back on text box
+
+- downcase post request, cause that'd be a hassle
+- error handling of post parsing (atm this will often break)
+- fallenfrukt posts have gotten date from incorrect field
+- in post objects, go from text-representation to proper localtime timestamp
+- history of input commands, triggerable with 'up' button
+- implement pausing of terminal, in awaitance of ajax content
+- get comments from post
+- put eliza-rules.lisp in content and have something more generic
+for rule-sets (the idea being that seapup will explore some domain sometimes)
+- add sessions
+-- add context-sensitivity
+-- add conversation choices
+- periodically refresh content-cache
+- change color of input
+- add hashlink change knowledge in ajax responses
+- update hashlink when typing post names on user-interface
+- add 'there's more content' hint when there's more content at bottom of the page
+- think of punctuation processing conundrum
+- add saving of conversations
+- add other categories besides blog posts
+- add user-support
+- add mobile stylesheet/however you do that
+- when loading page, input hash string into terminal
+- searching/indexing of text
+- support markdown text
+
+v - grok 'blog post x'
+v - making blog links: issue where javascript doesn't encode farther than the '

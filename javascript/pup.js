@@ -140,7 +140,7 @@ var terminal =
          var replace_regex_tokens = function (match, msg_name, msg_val, offset, string) {
              var enc_msg = encodeURIComponent(msg_val);
              var url = make_term_url(enc_msg);
-             return "<a class='termLink' href='" + url + "'>" 
+             return "<a class='termLink' href=\"" + url + "\"'>" 
                  + msg_name + "</a>";
          };
 
@@ -177,7 +177,7 @@ var terminal =
          // helpers
          var scrollTo = function ($elem){
              $("html,body").animate(
-                 { scrollTop: $elem.offset().top},
+                 { scrollTop: $elem.offset().top - 12},
                  "slow");
          };
 

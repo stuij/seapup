@@ -14,11 +14,24 @@ No worries. Here's what you can do:<br/>
 - Type 'blog' to see the blog.<br/>
 - Type random stuff to have a conversation with me, sea pup. I'm a barrel of information.
 ")
+
+    (((%* %x) blog year (%* %y))
+     ,#'(lambda (bindings)
+          (declare (ignorable bindings))
+          (print-blog-year-posts bindings)))
+    
+    (((%* %x) blog years (%* %y))
+     ,#'(lambda (bindings)
+          (declare (ignorable bindings))
+          (print-just-years)))
+    
+    (((%* %x) blog post (%* %y))
+     ,#'(lambda (bindings)
+          (blog-post bindings)))
     
     (((%* %x) blog (%* %y))
-     ,#'(lambda (bindings responses)
-          (declare (ignorable bindings responses))
-          (blog)))
+     ,#'(lambda (bindings)
+          (blog bindings)))
     
     ((%or
       ((%* %x) fuck (%* %y))

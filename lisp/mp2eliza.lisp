@@ -261,15 +261,11 @@
 ;;;;  eliza: Advanced version of Eliza.
 ;;; Has more rules, and accepts input without parens.
 
-
-(defun punctuation-p (char) (find char ".,;:!*?#-()\\\""))
-
 ;;; ==============================
 
 (defun eliza-grok (line)
   "Respond to user input using pattern matching rules."
-  (let ((input (chop-line (remove-if #'punctuation-p
-                                     line))))
+  (let ((input (chop-line (remove-punctuation line))))
     (use-eliza-rules input)))
 
 (defun chop-line (line)
@@ -288,13 +284,8 @@
         ((stringp thing)
          (split-sequence:split-sequence #\space thing))
         ((symbolp thing)
-         (let ((*print-case* :downcase))
-           (list (format nil "~A" thing))))
+         (list (symbol>string-downcase thing)))
         (t thing)))
-
-(defun print-with-spaces (list)
-  (let ((*print-case* :downcase))
-    (format nil "~{~A~^ ~}" list)))
 
 (defun reg-match (bind-pair response)
   (let ((result response)) 
@@ -307,11 +298,8 @@
                        (ppcre:regex-replace-all term result r)))))
     result))
 
-;;; ==============================
-
 
 (defvar *eliza-rules* nil)
-;;; ==============================
 
 ;;;; eliza-pm: use advanced pattern matcher
 
@@ -325,5 +313,5 @@
     (let ((output (typecase a-response
                     (string (reg-match (switch-viewpoint bindings)
                                        a-response))
-                    (function (apply a-response bindings responses)))))
+                    (function (funcall a-response bindings)))))
       (format nil "~A" output))))

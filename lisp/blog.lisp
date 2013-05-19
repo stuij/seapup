@@ -1,19 +1,81 @@
 (in-package :pup)
 
-;; general
-(defun blog ()
-  (let* ((out ""))
-    (loop for pos from 0 to 5
-          do (setf out (concatenate 'string out
-                                    (let ((post (nth pos *blog-posts*)))
-                                      (if post
-                                          (let ((title (post-title post)))
-                                            (concatenate 'string "<br/>_-" title "-__-" (concatenate 'string "blog post " title) "-_")))))))
-    (format nil "The latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
-</br>
-~A" out)))
-
 (defparameter *blog-posts* '())
+(defparameter *year-list* '())
+
+(defmacro bind-eliza-vars (vars bindings &body body)
+  (let ((letforms (loop for v in vars
+                        collect `(,v (get-eliza-var ,(symbol>string-downcase v) ,bindings)))))
+    `(let ,letforms
+       ,@body)))
+
+(defun get-eliza-var (var bindings)
+  (rest (assoc var bindings :test 'string-equal)))
+
+(defun blog (bindings)
+  (declare (ignorable bindings))
+  (let ((min-items (min (length *blog-posts*) 5)))
+    (if (> min-items 0)
+        (concatenate 'string
+                     "The latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
+</br>"
+                     (print-posts (subseq *blog-posts* 0 min-items)))
+        "Got no blog posts for ya..")))
+
+(defun print-posts (posts)
+  (let* ((out ""))
+    (loop for post in posts
+          do (setf out (concatenate 'string out
+                                    (get-post-summary post))))
+    out))
+
+(defun get-post-summary (post)
+  (let* ((title (post-title post))
+         (link-cmd (concatenate 'string "blog post " title)))
+    (concatenate 'string "<br/>_-" title "-__-"  link-cmd "-_")))
+
+(defun make-year-list ()
+  (setf *year-list* '())
+  (loop for post in *blog-posts*
+        do (let* ((y (timestamp-year (get-post-date post))))
+             (push-year-list y post))))
+
+(defun push-year-list (key val)
+  (let ((lst (assoc key *year-list*)))
+    (if lst
+        (setf (cdr (assoc key *year-list*)) (append (cdr lst) (list val)))
+        (setf *year-list* (acons key (list val) *year-list*)))))
+
+(defun print-just-years ()
+  (let ((years (loop for y in *year-list*
+                     collect (format nil "_-~A-__-blog year ~A-_" (car y) (car y)))))
+    (format nil "Blog years (pick one):</br></br>
+~{~A~^</br>~}" years)))
+
+(defun print-blog-year-posts (bindings)
+  (bind-eliza-vars (%y) bindings
+    (let ((year (parse-integer (print-with-spaces %y) :junk-allowed t)))
+      (if year
+          (print-posts (cdr (assoc year *year-list*)))
+          "Sorry, found no posts for that year.."))))
+
+(defun blog-post (bindings)
+  (bind-eliza-vars (%y) bindings
+    (print-post (find-post (print-with-spaces %y)))))
+
+(defun print-post (post)
+  (if post
+      (post-body post)
+      "Sorry, couldn't find your post."))
+
+(defun find-post (msg)
+  (loop for post in *blog-posts*
+        when (post-match-p post msg)
+          return post))
+
+(defun post-match-p (post msg)
+  (let ((title (remove-punctuation (post-title post))))
+    (string-equal title msg)))
 
 (defun load-posts ()
   (setf *blog-posts* '())
@@ -22,12 +84,14 @@
                                  (string-equal (pathname-type path) "post"))
                          :directories nil)
   (setf *blog-posts*
-        (sort *blog-posts* #'string-greaterp :key (lambda (post)
-                                                 (if (post-published post)
-                                                     (post-published post)
-                                                     (post-created post)))))
+        (sort *blog-posts* #'timestamp<
+              :key #'get-post-date))
   nil)
 
+(defun get-post-date (post)
+  (if (post-published post)
+      (post-published post)
+      (post-created post)))
 
 ;; post
 (defstruct post
@@ -75,7 +139,8 @@
 
 (defun parse-created (post tail)
   (when tail
-    (setf (post-created post) tail)))
+    (setf (post-created post)
+          (parse-timestring tail :date-time-separator #\space))))
 
 (defun parse-format (post tail)
   (when tail
@@ -97,3 +162,6 @@
   (if tail
       (setf (post-body post) tail)
       (setf (post-body post) "")))
+
+(load-posts)
+(make-year-list)

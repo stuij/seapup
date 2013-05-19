@@ -2,6 +2,19 @@
 
 (make-random-state)
 
+
+(defun punctuation-p (char) (find char ".,;:!*?#-()\\\""))
+
+(defun remove-punctuation (str)
+  (remove-if #'punctuation-p str))
+
+(defun format-downcase (control &rest vars)
+  (let ((*print-case* :downcase))
+    (apply #'format nil control vars)))
+
+(defun symbol>string-downcase (symbol)
+  (format-downcase "~A" symbol))
+
 (defun alist-keys (alist)
   "Like HASH-TABLE-KEYS."
   (mapcar #'car alist))
@@ -18,6 +31,9 @@
 
 (defun pr (&rest vals)
   (format t "~{~a: ~a~%~}~%" vals))
+
+(defun print-with-spaces (list)
+  (format-downcase "~{~A~^ ~}" list))
 
 (defun cave (&optional (path ""))
   (merge-pathnames
@@ -47,16 +63,16 @@
 
 (defun start-connection-logging ()
   (log5:start-sender
-   'app-log 
-   (log5:stream-sender  :location *app-log-pathname*)  
-   :category-spec '(net-call)  
-   :output-spec '(log5:time log5:category log5:message)))
+      'app-log 
+      (log5:stream-sender  :location *app-log-pathname*)  
+      :category-spec '(net-call)  
+      :output-spec '(log5:time log5:category log5:message)))
 
 (defun start-server-logging ()
   (log5:start-sender
-   'general
-   (log5:stream-sender  :location *standard-output*)  
-   :category-spec '(log5:warn+)  
-   :output-spec '(log5:time log5:category log5:message)))
+      'general
+      (log5:stream-sender  :location *standard-output*)  
+      :category-spec '(log5:warn+)  
+      :output-spec '(log5:time log5:category log5:message)))
 
 (start-server-logging)
