@@ -1,5 +1,6 @@
 - blog post dissimination: rank by year/tag
 - add comments to posts in backend
+- when fall-through rules, offer random post/quote
 - trim strings and whitespace from input before processing
 - hunchentoot output feedback to repl when firing form web-page
 - import underbelly posts
@@ -12,6 +13,7 @@
 - history of input commands, triggerable with 'up' button
 - implement pausing of terminal, in awaitance of ajax content
 - get comments from post
+- put 'next' button under blog posts. Damn readable blog I have.
 - put eliza-rules.lisp in content and have something more generic
 for rule-sets (the idea being that seapup will explore some domain sometimes)
 - add sessions

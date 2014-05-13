@@ -2,24 +2,25 @@
 
 (defparameter *acceptor* nil)
 
-(defun start-server-1 (acceptor)
+(defun start-server* (acceptor)
   (when (and *acceptor* (= (acceptor-port *acceptor*) (acceptor-port acceptor)))
     (cerror "Restart server." "Server already running on port ~D."
             (acceptor-port acceptor))
     (stop *acceptor*))
-  (start-connection-logging)
+  (setf (acceptor-message-log-destination acceptor) *message-log-pathname*)
+  (setf (acceptor-access-log-destination acceptor)  *access-log-pathname*)
   (format t "Listening on ~A:~D.~%"
           (or (acceptor-address acceptor) "0.0.0.0") 
           (acceptor-port acceptor))
   (setf *acceptor* (start acceptor)))
 
 (defun start-server (&key (host *host*) (port *port*))
-  (start-server-1 (make-instance 'easy-acceptor :address host :port port)))
+  (start-server* (make-instance 'easy-acceptor :address host :port port)))
 
 (defun start-ssl-server (&key (host *host*) (port *ssl-port*)
                            (key *ssl-private-key*) (cert *ssl-certificate*)
                            (pass *ssl-pass*))
-  (start-server-1 (make-instance 'easy-ssl-acceptor
+  (start-server* (make-instance 'easy-ssl-acceptor
                                  :ssl-privatekey-file key
                                  :ssl-certificate-file cert
                                  :ssl-privatekey-password pass
@@ -78,13 +79,17 @@
 
 (defun handle-main ()
   (let ((*string-modifier* #'identity)
-        (locales (get-locales)))
+        (locales (get-locales))
+        (session (start-session)))
+    (dbg "static session:" session)
     (with-output-to-string (*default-template-output*)
       (fill-and-print-template (cave "templates/main.tpl")
                                `(:accept-i18ns ,locales)))))
 
 (defun handle-ajax ()
-  (let ((json-data (hunchentoot:raw-post-data :force-text t)))
+  (let ((session (start-session))
+        (json-data (hunchentoot:raw-post-data :force-text t)))
+    (dbg "ajax-session:" session)
     (json-rpc:invoke-rpc json-data)))
 
 (json-rpc:defun-json-rpc eliza :guessing (data)

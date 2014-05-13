@@ -4,4 +4,3 @@
 lisp/*.fasl
 content/*
 volatile/*
-www/data/*

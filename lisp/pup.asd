@@ -2,7 +2,9 @@
 
 (defsystem :pup
   :description "Pups at sea"
-  :depends-on (:alexandria :cl-ppcre :cl-fad :hunchentoot :html-template :split-sequence :log5 :cl-json :3bmd :local-time)
+  :depends-on (:alexandria :cl-ppcre :cl-interpol :cl-fad :split-sequence
+                           :local-time
+               :hunchentoot :html-template :cl-json :3bmd)
   :serial t
   :components
   ((:file "package")

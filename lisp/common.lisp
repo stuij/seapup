@@ -1,7 +1,7 @@
 (in-package :pup)
 
 (make-random-state)
-
+(cl-interpol:enable-interpol-syntax)
 
 (defun punctuation-p (char) (find char ".,;:!*?#-()\\\""))
 
@@ -29,9 +29,6 @@
   (loop for (car . cdr) in alist
         collect (cons car (funcall function car cdr))))
 
-(defun pr (&rest vals)
-  (format t "~{~a: ~a~%~}~%" vals))
-
 (defun print-with-spaces (list)
   (format-downcase "~{~A~^ ~}" list))
 
@@ -40,10 +37,14 @@
    (concatenate 'string "../" path)
    (directory-namestring (asdf:component-pathname (asdf:find-system :pup)))))
 
-(defvar *logging-root*)
-
 (defun logfile (name)
   (merge-pathnames name (cave "volatile/logs/")))
+
+(defun logs (id format &rest args)
+  (apply #'tbnl:log-message* id format args))
+
+(defun dbg (&rest vals)
+  (logs :debug "~{~A~^, ~}" vals))
 
 (defun www (name)
   (merge-pathnames name (cave "www/")))
@@ -57,22 +58,18 @@
 (load-config)
 
 
-(log5:defcategory server)
-(log5:defcategory ajax-call)
-(log5:defcategory net-call (and server ajax-call))
+#|
+;; log5 is a bit heavy for now. If things ever get complex, We know where to go
 
-(defun start-connection-logging ()
-  (log5:start-sender
-      'app-log 
-      (log5:stream-sender  :location *app-log-pathname*)  
-      :category-spec '(net-call)  
-      :output-spec '(log5:time log5:category log5:message)))
+(log5:defcategory eliza)
+(log5:defcategory blog)
+(log5:defcategory app (and blog eliza))
 
-(defun start-server-logging ()
-  (log5:start-sender
-      'general
-      (log5:stream-sender  :location *standard-output*)  
-      :category-spec '(log5:warn+)  
-      :output-spec '(log5:time log5:category log5:message)))
+(defun start-app-logging ()
+  (log5:start-sender 'app-log 
+   (log5:stream-sender :location *app-log-pathname*)  
+   :category-spec '(app)  
+   :output-spec '(log5:time log5:category log5:message)))
 
-(start-server-logging)
+(start-app-logging)
+|#

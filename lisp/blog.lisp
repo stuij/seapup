@@ -37,8 +37,10 @@
 (defun make-year-list ()
   (setf *year-list* '())
   (loop for post in *blog-posts*
-        do (let* ((y (timestamp-year (get-post-date post))))
-             (push-year-list y post))))
+        do (let* ((y (timestamp-year (get-post-date post)))
+                  (deletedp (post-deleted post)))
+             (unless deletedp
+               (push-year-list y post)))))
 
 (defun push-year-list (key val)
   (let ((lst (assoc key *year-list*)))
@@ -79,7 +81,7 @@
 
 (defun load-posts ()
   (setf *blog-posts* '())
-  (cl-fad:walk-directory (cave "content") #'parse-post
+  (cl-fad:walk-directory (cave "content/text") #'parse-post
                          :test (lambda (path)
                                  (string-equal (pathname-type path) "post"))
                          :directories nil)
@@ -97,6 +99,7 @@
 (defstruct post
   created
   published
+  deleted
   format
   type
   tags
@@ -125,6 +128,7 @@
         as j = (position #\space line :start i)
         do (let ((item (switch ((subseq line i j) :test 'string-equal)
                          ("created:" 'parse-created)
+                         ("deleted:" 'parse-deleted)
                          ("format:" 'parse-format)
                          ("type:" 'parse-type)
                          ("title:" 'parse-title)
@@ -141,6 +145,10 @@
   (when tail
     (setf (post-created post)
           (parse-timestring tail :date-time-separator #\space))))
+
+(defun parse-deleted (post tail)
+  (when (and tail (string-equal tail "1"))
+    (setf (post-deleted post) T)))
 
 (defun parse-format (post tail)
   (when tail

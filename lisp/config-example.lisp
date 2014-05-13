@@ -16,9 +16,5 @@
 (defparameter *ssl-certificate* (cave "volatile/certificates/CA.crt"))
 (defparameter *ssl-pass* nil)
 
-(defparameter *traces-root* (cave "volatile/traces/"))
-(defparameter *logging-root* (cave "volatile/log/"))
-
 (defparameter *message-log-pathname* (logfile "pup-message.log"))
 (defparameter *access-log-pathname*  (logfile "pup-access.log"))
-(defparameter *app-log-pathname*  (logfile "pup-access.log"))
