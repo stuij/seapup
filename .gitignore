@@ -2,5 +2,5 @@
 \#*\#
 .\#*
 lisp/*.fasl
-content/*
+content
 volatile/*
