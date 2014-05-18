@@ -118,8 +118,8 @@ var terminal =
 
          var user_output = function (string, id) {
              var $msg = $("<div class='termSliver' id='termId" + id + "'>");
-             $msg.append("<div class=user'>> " 
-                         + massage_msg(string) + "</div>");
+             $msg.append("<div class=user>> <span class='user-input'>" 
+                         + massage_msg(string) + "</span></div>");
              $out.append($msg);
              massage_term_div($msg);
              scrollTo($msg);
