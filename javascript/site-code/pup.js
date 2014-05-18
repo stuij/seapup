@@ -25,7 +25,7 @@ var pup =
 
          // fns
          var jrpc = function(url, id, method, params, success, error) {
-             log("rpc-ing");
+             // log("rpc-ing");
              var request = JSON.stringify(
                  {'jsonrpc': '2.0', 'method': method,
                   'params': params, 'id': id});
@@ -94,12 +94,13 @@ var terminal =
              $out = domOut;
              rpc = an_rpc;
              $in_input[0].focus();
-             $in_form.submit(input_submit);
+             $in_form.ajaxForm(input_submit);
              $("#padding").height($.viewportH());
              scrollTo($("#top"));
          };
 
-         var input_submit = function (e) {
+         var input_submit = function () {
+//             e.preventDefault();
              user_input($in_input.val());
              $in_input.val("");             
              return false;
