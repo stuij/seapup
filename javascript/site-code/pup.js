@@ -87,20 +87,23 @@ var terminal =
          var $out;
          var rpc;
 
+         var focus_on_input = function () {
+             $in_input[0].focus();
+         };
+
          // fns
          var init = function (an_rpc, textIn, domOut) {
              $in_form = textIn;
              $in_input = $(":input", $in_form);
              $out = domOut;
              rpc = an_rpc;
-             $in_input[0].focus();
+             focus_on_input();
              $in_form.ajaxForm(input_submit);
              $("#padding").height($.viewportH());
              scrollTo($("#top"));
          };
 
          var input_submit = function () {
-//             e.preventDefault();
              user_input($in_input.val());
              $in_input.val("");             
              return false;
@@ -152,6 +155,7 @@ var terminal =
                  put_hash_msg(msg);
                  user_input(msg);
              }
+             focus_on_input();
              return false; //for good measure
          };
 
