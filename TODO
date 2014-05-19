@@ -1,37 +1,48 @@
-- blog post dissimination: rank by year/tag
+soonish:
+- fix oldest-first instead of newest-first
+- add mobile stylesheet/however you do that
+- when loading page, input hash string into terminal
+- add hashlink change knowledge in ajax responses
+- update hashlink when typing text/only-blog-names on user-interface
 - add comments to posts in backend
+- add make-comment link and machinery
+- get comments from post in webbel
+- decorate blogposts with the usual things like time
+- decorate blog listings to be a bit more enticing
+- favicon
+- blog post dissimination: rank by tag
+- history of input commands, triggerable with 'up' button
+- fallenfrukt posts have gotten date from incorrect field
+- seapup sbcl-bin and add to upstart or whatever du-jour process manager
 - when fall-through rules, offer random post/quote
 - trim strings and whitespace from input before processing
-- hunchentoot output feedback to repl when firing form web-page
-- import underbelly posts
-- click a link: focus back on text box
+- implement pausing of terminal, in awaitance of ajax content
+- periodically refresh content-cache
+- add saving of conversations
+- support markdown text
+- add other categories besides blog posts
 
+laterish:
+- add 'there's more content' hint when there's more content at bottom of the page
 - downcase post request, cause that'd be a hassle
 - error handling of post parsing (atm this will often break)
-- fallenfrukt posts have gotten date from incorrect field
 - in post objects, go from text-representation to proper localtime timestamp
-- history of input commands, triggerable with 'up' button
-- implement pausing of terminal, in awaitance of ajax content
-- get comments from post
 - put 'next' button under blog posts. Damn readable blog I have.
 - put eliza-rules.lisp in content and have something more generic
 for rule-sets (the idea being that seapup will explore some domain sometimes)
 - add sessions
 -- add context-sensitivity
 -- add conversation choices
-- periodically refresh content-cache
-- change color of input
-- add hashlink change knowledge in ajax responses
-- update hashlink when typing post names on user-interface
-- add 'there's more content' hint when there's more content at bottom of the page
 - think of punctuation processing conundrum
-- add saving of conversations
-- add other categories besides blog posts
 - add user-support
-- add mobile stylesheet/however you do that
-- when loading page, input hash string into terminal
 - searching/indexing of text
-- support markdown text
+- rss support?
+- hunchentoot output feedback to repl when firing form web-page [later me: ?]
 
+done:
+v - blog post dissimination: rank by year
+v - import underbelly posts
+v - click a link: focus back on text box
 v - grok 'blog post x'
 v - making blog links: issue where javascript doesn't encode farther than the '
+v - change color of input
