@@ -1,6 +1,6 @@
 *~
 \#*\#
 .\#*
-lisp/*.fasl
+*.fasl
 content
 volatile/*
