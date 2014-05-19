@@ -1,11 +1,13 @@
+/* emacs color matcher: http://raebear.net/comp/emacscolors.html */
+
 body, html
 {
   font-family: helvetica;
-  background-color: #000;
+  background-color: #262626;
   color: #aaa;
   }
 
-a {color:#fff; text-decoration: none;}
+a {color: #6ca6cd; text-decoration: none;} /* deep sky blue 3 */
 
 #output
 { width: 730px;
@@ -26,7 +28,7 @@ a {color:#fff; text-decoration: none;}
   bottom: 0;
   border: none;
   padding: 10px 0 10px 0;
-  background-color: #000;
+  background-color: #262626;
   }
 
 .input-form
@@ -38,7 +40,7 @@ a {color:#fff; text-decoration: none;}
 
 .input-form *
 { width:90%;
-  background-color: #000;
+  background-color: #262626;
   color: #aaa;
   padding: 4px;
   border-width: 1px;
@@ -50,7 +52,7 @@ a {color:#fff; text-decoration: none;}
 
 #input-input
 {
-  color: #FF7F50;
+  color: #ffa07a; /* light salmon */
   }
 
 .eliza
@@ -65,5 +67,5 @@ a {color:#fff; text-decoration: none;}
 
 .user-input
 {
-  color: #FF7F50;
+  color: #ffa07a; /* light salmon */
   }
