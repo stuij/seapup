@@ -19,7 +19,7 @@
         (concatenate 'string
                      "The latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
 </br>"
-                     (print-posts (subseq *blog-posts* 0 min-items)))
+                     (print-posts (subseq (reverse *blog-posts*) 0 min-items)))
         "Got no blog posts for ya..")))
 
 (defun print-posts (posts)
