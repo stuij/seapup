@@ -1,6 +1,4 @@
 soonish:
-- fix oldest-first instead of newest-first
-- add mobile stylesheet/however you do that
 - when loading page, input hash string into terminal
 - add hashlink change knowledge in ajax responses
 - update hashlink when typing text/only-blog-names on user-interface
@@ -40,6 +38,8 @@ for rule-sets (the idea being that seapup will explore some domain sometimes)
 - hunchentoot output feedback to repl when firing form web-page [later me: ?]
 
 done:
+v - add mobile stylesheet/however you do that
+v - fix oldest-first instead of newest-first
 v - blog post dissimination: rank by year
 v - import underbelly posts
 v - click a link: focus back on text box
