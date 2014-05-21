@@ -1,9 +1,15 @@
 jQuery.extend(verge);
 
-var debug = true;
-
 if(typeof console === "undefined") {
-    var console = { log: function() { } };
+    console = { log: function() { } };
+}
+
+if(typeof console.log === "undefined") {
+    console.log = function() {};
+}
+
+if(typeof console.debug === "undefined") {
+    console.debug = function() {};
 }
 
 var log = function () {
@@ -25,7 +31,6 @@ var pup =
 
          // fns
          var jrpc = function(url, id, method, params, success, error) {
-             // log("rpc-ing");
              var request = JSON.stringify(
                  {'jsonrpc': '2.0', 'method': method,
                   'params': params, 'id': id});
@@ -70,7 +75,7 @@ var pup =
 
          var adjustStyle = function (width) {
              width = parseInt(width);
-             if (width < 700) {
+             if (width < 600) {
                  $("#size-stylesheet").attr("href", "/static/css/narrow.css");
              } else {
                  $("#size-stylesheet").attr("href", "/static/css/wide.css");

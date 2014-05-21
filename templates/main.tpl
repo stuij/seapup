@@ -13,17 +13,16 @@
         <![endif]-->
     
     <!-- <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>-->
+    <script type="text/javascript">
+      debug=<!-- TMPL_VAR debug -->;
+      acceptI18ns=<!-- TMPL_VAR accept-i18ns -->;
+      jQuery(document).ready(pup.init);
+    </script>
     <script type="text/javascript" src="/static/js/contrib/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="/static/js/contrib/jquery.form.js"></script>
     <script type="text/javascript" src="/static/js/contrib/json2.js"></script>
     <script type="text/javascript" src="/static/js/contrib/verge.js"></script>
     <script type="text/javascript" src="/static/js/site-code/pup.js"></script>
-    <script type="text/javascript">
-      var acceptI18ns=<!-- TMPL_VAR accept-i18ns -->;
-    </script>
-    <script type="text/javascript">
-      jQuery(document).ready(pup.init);
-    </script>
   </head> 
   <body>
     <div id="output">
@@ -37,8 +36,8 @@
     <div class="input">
       <form class="input-form" autocomplete="off">
         > <input id="input-input" type="text">
-      </form> 
-      
-    </div>
-  </body>
+</form> 
+
+</div>
+</body>
 </html>

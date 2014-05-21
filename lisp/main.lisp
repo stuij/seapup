@@ -21,11 +21,11 @@
                            (key *ssl-private-key*) (cert *ssl-certificate*)
                            (pass *ssl-pass*))
   (start-server* (make-instance 'easy-ssl-acceptor
-                                 :ssl-privatekey-file key
-                                 :ssl-certificate-file cert
-                                 :ssl-privatekey-password pass
-                                 :address host
-                                 :port port)))
+                                :ssl-privatekey-file key
+                                :ssl-certificate-file cert
+                                :ssl-privatekey-password pass
+                                :address host
+                                :port port)))
 
 (defun stop-server ()
   (unless *acceptor* (error "No server running."))
@@ -84,7 +84,8 @@
     (dbg "static session:" session)
     (with-output-to-string (*default-template-output*)
       (fill-and-print-template (cave "templates/main.tpl")
-                               `(:accept-i18ns ,locales)))))
+                               `(:accept-i18ns ,locales
+                                 :debug *debug-js*)))))
 
 (defun handle-ajax ()
   (let ((session (start-session))

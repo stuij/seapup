@@ -2,7 +2,7 @@
 
 (defparameter *host* nil) ;; nil equates to all connections
 (defparameter *port* 4242)
-(defparameter *ssl-port* 4333)
+(defparameter *ssl-port* 4433)
 
 (setf *session-max-time* 525600)
 
@@ -19,6 +19,7 @@
 (setf *show-lisp-errors-p* nil)
 
 (defparameter *debug* t)
+(defparameter *debug-js* t)
 
 ;; when set to true, errors are caught and logged by hunchentoot
 ;; when set to nil, they go to the debugger. So for production,
