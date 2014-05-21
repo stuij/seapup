@@ -1,8 +1,11 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 <html>
   <head>
     <title>Seapup</title>
     
-    <link type="text/css" href="/static/css/pup.css" rel="stylesheet"></link>
+    <link type="text/css" href="/static/css/pup.css" rel="stylesheet"></link>    
+    <link id="size-stylesheet" type="text/css" rel="stylesheet" href="/static/css/wide.css" /> 
+
     <!--[if lt ie 7]>
         <style type="text/css">
           #output { margin-bottom: 0; }

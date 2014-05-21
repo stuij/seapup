@@ -67,10 +67,26 @@ var pup =
              };
              return id;
          };
+
+         var adjustStyle = function (width) {
+             width = parseInt(width);
+             if (width < 700) {
+                 $("#size-stylesheet").attr("href", "/static/css/narrow.css");
+             } else {
+                 $("#size-stylesheet").attr("href", "/static/css/wide.css");
+             }
+         };
+
+         var resToStyle = function() {
+             adjustStyle($(this).width());            
+         };
          
          var init = function($) {
+             resToStyle();
+             $(window).resize(resToStyle);
              terminal.init(terminal_rpc, $(".input-form"), $("#output"));
          };
+
          
          // interface
          return {
