@@ -115,13 +115,23 @@ var terminal =
          // fns
          var init = function (an_rpc, textIn, domOut) {
              $in_form = textIn;
-             $in_input = $(":input", $in_form);
              $out = domOut;
              rpc = an_rpc;
+
+             setup_plumbing();
              focus_on_input();
+             scrollTo($("#top"));
+             
+             var msg = decode_hash(location.hash);
+             if(msg) {
+                 user_input(msg);
+             }
+         };
+
+         var setup_plumbing = function () {
+             $in_input = $(":input", $in_form);
              $in_form.ajaxForm(input_submit);
              $("#padding").height($.viewportH());
-             scrollTo($("#top"));
          };
 
          var input_submit = function () {
@@ -189,11 +199,11 @@ var terminal =
          };
 
          var pause = function () {
-             
+             // we don't need this yet
          };
 
          var resume = function () {
-             
+             // and this neither
          };
 
          var error = function (id, string) {
@@ -216,7 +226,7 @@ var terminal =
          };
 
          var put_hash_msg = function (msg) {
-             window.location.hash = encodeURIComponent(msg);
+             window.location.replace("#" + encodeURIComponent(msg));
          };
 
          var ltrim = function () {
