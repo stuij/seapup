@@ -85,7 +85,7 @@
     (with-output-to-string (*default-template-output*)
       (fill-and-print-template (cave "templates/main.tpl")
                                `(:accept-i18ns ,locales
-                                 :debug *debug-js*)))))
+                                 :debug ,(json:encode-json-to-string *debug-js*))))))
 
 (defun handle-ajax ()
   (let ((session (start-session))
