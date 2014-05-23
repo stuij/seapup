@@ -136,14 +136,14 @@ var terminal =
 
          var input_submit = function () {
              user_input($in_input.val());
-             $in_input.val("");             
+             $in_input.val("");
              return false;
          };
 
          var user_input = function (msg) {
              if(msg) {
                  var id = rpc(msg);
-                 user_output(msg, id);                 
+                 user_output(msg, id);
              }
          };
 
@@ -228,20 +228,6 @@ var terminal =
          var put_hash_msg = function (msg) {
              window.location.replace("#" + encodeURIComponent(msg));
          };
-
-         var ltrim = function () {
-             return this.replace(/^\s+/, '');
-         };
-
-         var rtrim = function () {
-             return this.replace(/\s+$/, '');
-         };
-
-         var trim = function () {
-             return this.ltrim().rtrim();
-         };
-
-
 
          // interface
          return {
