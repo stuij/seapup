@@ -10,8 +10,7 @@ body, html
 a {color: #6ca6cd; text-decoration: none;} /* deep sky blue 3 */
 
 #output
-{ width: 730px;
-  margin-left: auto;
+{ margin-left: auto;
   margin-right: auto;
   border: none;
   padding: 0 20px;
@@ -32,8 +31,7 @@ a {color: #6ca6cd; text-decoration: none;} /* deep sky blue 3 */
   }
 
 .input-form
-{ width: 730px;
-  margin-left: auto;
+{ margin-left: auto;
   margin-right: auto;
   border: none;
   }
