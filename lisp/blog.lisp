@@ -63,7 +63,7 @@
 
 (defun blog-post (bindings)
   (bind-eliza-vars (%y) bindings
-    (print-post (find-post (print-with-spaces %y)))))
+    (print-post (find-post %y))))
 
 (defun print-post (post)
   (if post
@@ -76,8 +76,8 @@
           return post))
 
 (defun post-match-p (post msg)
-  (let ((title (remove-punctuation (post-title post))))
-    (string-equal title msg)))
+  (let ((title (line-to-eliza (post-title post))))
+    (tree-equal title msg :test #'string-equal)))
 
 (defun load-posts ()
   (setf *blog-posts* '())

@@ -265,11 +265,14 @@
 
 (defun eliza-grok (line)
   "Respond to user input using pattern matching rules."
-  (let ((input (chop-line (remove-punctuation line))))
-    (use-eliza-rules input)))
+  (let ((input (line-to-eliza line)))
+    (use-eliza-rules input *eliza-rules*)))
 
 (defun chop-line (line)
-  (split-sequence:split-sequence #\space line))
+  (split-sequence:split-sequence #\space line :remove-empty-subseqs t))
+
+(defun line-to-eliza (line)
+  (chop-line (remove-punctuation line)))
 
 (defun first-chop (rule)
   (chop-list (first rule)))
@@ -303,9 +306,9 @@
 
 ;;;; eliza-pm: use advanced pattern matcher
 
-(defun use-eliza-rules (input)
+(defun use-eliza-rules (input rules)
   "Find some rule with which to transform the input."
-  (rule-based-translator input *eliza-rules* :rule-if #'first-chop
+  (rule-based-translator input rules :rule-if #'first-chop
                                              :action #'eliza-action))
 
 (defun eliza-action (bindings responses)

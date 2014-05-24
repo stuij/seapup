@@ -3,7 +3,7 @@
 (make-random-state)
 (cl-interpol:enable-interpol-syntax)
 
-(defun punctuation-p (char) (find char ".,;:!*?#-()\\\""))
+(defun punctuation-p (char) (find char ".,;:!'*?#-()\\\""))
 
 (defun remove-punctuation (str)
   (remove-if #'punctuation-p str))
