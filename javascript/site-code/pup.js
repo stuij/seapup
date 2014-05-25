@@ -1,5 +1,3 @@
-jQuery.extend(verge);
-
 if(typeof console === "undefined") {
     console = { log: function() { } };
 }
@@ -26,6 +24,16 @@ var dbg = function () {
 
 var pup = 
     (function ($) {
+
+         $.extend(verge);
+
+         $.expr[':'].external = function(obj){
+             return !obj.href.match(/^mailto\:/)
+                 && (obj.hostname != location.hostname)
+                 && !obj.href.match(/^javascript\:/)
+                 && !obj.href.match(/^$/);
+         };
+
          // var
          var rpc_id=0;
 
@@ -192,6 +200,7 @@ var terminal =
 
          var massage_term_div = function ($div) {
              $(".termLink", $div).click(term_click);
+             $("a:external", $div).attr('target', '_blank');
          };
 
          var massage_msg = function (msg) {
