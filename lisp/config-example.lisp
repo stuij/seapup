@@ -21,15 +21,6 @@
 (defparameter *debug* t)
 (defparameter *debug-js* t)
 
-;; when set to true, errors are caught and logged by hunchentoot
-;; when set to nil, they go to the debugger. So for production,
-;; set to to true
-(setf *catch-errors-p* t)
-
-;; when set, lisp errors are output to html
-(setf *show-lisp-errors-p* nil)
-
-
 ;; paths
 (defparameter *ssl-private-key* (cave "volatile/certificates/CA.key"))
 (defparameter *ssl-certificate* (cave "volatile/certificates/CA.crt"))
