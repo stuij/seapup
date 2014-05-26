@@ -55,8 +55,6 @@
         (load file)
         (error "Seapup config file doesn't exist. Please copy seapup/lisp/code/config-example.lisp into seapup/volatile/config/config.lisp and edit appropriately."))))
 
-(load-config)
-
 
 #|
 ;; log5 is a bit heavy for now. If things ever get complex, We know where to go

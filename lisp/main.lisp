@@ -1,5 +1,8 @@
 (in-package :pup)
 
+(load-config)
+(context-init)
+
 (defparameter *acceptor* nil)
 
 (defun start-server* (acceptor)
@@ -20,6 +23,7 @@
 (defun start-ssl-server (&key (host *host*) (port *ssl-port*)
                            (key *ssl-private-key*) (cert *ssl-certificate*)
                            (pass *ssl-pass*))
+  (load-config)
   (start-server* (make-instance 'easy-ssl-acceptor
                                 :ssl-privatekey-file key
                                 :ssl-certificate-file cert

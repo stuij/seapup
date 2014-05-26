@@ -10,7 +10,7 @@
   ((:file "package")
    (:file "common")
    (:file "mp2eliza")
-   (:file "eliza-rules")
    (:file "blog")
    (:file "action-rules")
+   (:file "context")
    (:file "main")))

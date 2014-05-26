@@ -221,7 +221,7 @@
                    (rule-if #'first) (rule-then #'rest) (action #'sublis))
   "Find the first rule in rules that matches input,
   and apply the action to that rule."
-  (some 
+  (some
    #'(lambda (rule)
        (let ((result (funcall matcher (funcall rule-if rule) 
                               input)))
@@ -237,7 +237,7 @@
 (defun rule-pattern (rule) (first rule))
 (defun rule-responses (rule) (rest rule))
 
-(defvar *viewpoint* nil)
+(defparameter *viewpoint* '(("I" . "you") ("you" . "me") ("me" . "you") ("am" . "are") ("yourself" . "myself") ("your" . "my") ("my" . "your")))
 
 (defun switch-viewpoint (words)
   "Change I to you and vice versa, and so on."
@@ -262,11 +262,6 @@
 ;;; Has more rules, and accepts input without parens.
 
 ;;; ==============================
-
-(defun eliza-grok (line)
-  "Respond to user input using pattern matching rules."
-  (let ((input (line-to-eliza line)))
-    (use-eliza-rules input *eliza-rules*)))
 
 (defun chop-line (line)
   (split-sequence:split-sequence #\space line :remove-empty-subseqs t))
@@ -300,7 +295,6 @@
                  (setf result
                        (ppcre:regex-replace-all term result r)))))
     result))
-
 
 (defvar *eliza-rules* nil)
 
