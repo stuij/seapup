@@ -38,6 +38,26 @@ var pup =
          var rpc_id=0;
 
          // fns
+         var detectIE = function () {
+             var ua = window.navigator.userAgent;
+             var msie = ua.indexOf('MSIE ');
+             var trident = ua.indexOf('Trident/');
+
+             if (msie > 0) {
+                 // IE 10 or older => return version number
+                 return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+             }
+
+             if (trident > 0) {
+                 // IE 11 (or newer) => return version number
+                 var rv = ua.indexOf('rv:');
+                 return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+             }
+
+             // other browser
+             return false;
+         };
+
          var jrpc = function(url, id, method, params, success, error) {
              var request = JSON.stringify(
                  {'jsonrpc': '2.0', 'method': method,
@@ -85,6 +105,8 @@ var pup =
              width = parseInt(width);
              if (width < 600) {
                  $("#size-stylesheet").attr("href", "/static/css/narrow.css");
+             } else if (width < 750) {
+                 $("#size-stylesheet").attr("href", "/static/css/middle.css");
              } else {
                  $("#size-stylesheet").attr("href", "/static/css/wide.css");
              }
@@ -140,6 +162,35 @@ var terminal =
              $in_input = $(":input", $in_form);
              $in_form.ajaxForm(input_submit);
              $("#padding").height($.viewportH());
+             setup_scrolling();
+         };
+
+         var get_IE_all_down = function () {
+             return document.body.scrollHeight - $(this).scrollTop() + 42
+                 <= $(this).height() ? true : false;
+         };
+
+         var get_others_all_down = function () {             
+             return window.innerHeight + window.scrollY - 42 >= 
+                 document.body.offsetHeight ? true : false;
+         };
+
+
+         var setup_scrolling = function () {
+             window.onscroll =
+                 function(){
+                     var allDown = detectIE() ? 
+                         get_IE_all_down() : get_others_all_down();
+
+                     if (allDown) {
+                         $(".scroll-down-maybe-inner")
+                             .css("background-image", "none");
+                     } else {
+                         $(".scroll-down-maybe-inner")
+                             .css("background-image", 
+                                  "url(/static/img/arrow-faint.png)");
+                     }
+                 };
          };
 
          var input_submit = function () {

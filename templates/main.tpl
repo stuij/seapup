@@ -1,9 +1,10 @@
+<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 <html>
   <head>
     <title>Seapup</title>
     
-    <link type="text/css" href="/static/css/pup.css" rel="stylesheet"></link>    
+    <link type="text/css" href="/static/css/pup.css" rel="stylesheet"/>    
     <link id="size-stylesheet" type="text/css" rel="stylesheet" href="/static/css/wide.css" /> 
 
     <!--[if lt ie 7]>
@@ -30,16 +31,18 @@
     <div id="output">
       <div id="padding">
       </div>
-      <div id="top">Welcome to Seapup's cosy home!</br>
+      <div id="top">Welcome to Seapup's cosy home!<br/>
         Type some stuff below if you feel like.
-      </br></br></br>
+      <br/><br/><br/>
       </div>
+    </div>
+    <div class="scroll-down-maybe">
+      <div class="scroll-down-maybe-inner"></div>
     </div>
     <div class="input">
       <form class="input-form" autocomplete="off">
-        > <input id="input-input" type="text">
-</form> 
-
-</div>
-</body>
+        &gt; <input id="input-input" type="text">
+      </form> 
+    </div>
+  </body>
 </html>
