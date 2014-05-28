@@ -15,6 +15,9 @@
 (defun symbol>string-downcase (symbol)
   (format-downcase "~A" symbol))
 
+(defun strcat (&rest strings)
+  (apply #'concatenate 'string strings))
+
 (defun alist-keys (alist)
   "Like HASH-TABLE-KEYS."
   (mapcar #'car alist))
