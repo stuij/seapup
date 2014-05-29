@@ -49,6 +49,11 @@
 (defun dbg (&rest vals)
   (logs :debug "~{~A~^, ~}" vals))
 
+(defun err (&rest vals)
+  (if *debug*
+      (error "~{~A~^, ~}" vals)
+      (apply #'dbg "error: " vals)))
+
 (defun www (name)
   (merge-pathnames name (cave "www/")))
 
