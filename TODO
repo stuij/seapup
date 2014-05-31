@@ -1,36 +1,26 @@
 soonish:
-- when loading page, input hash string into terminal
-- add hashlink change knowledge in ajax responses
-- update hashlink when typing text/only-blog-names on user-interface
-- add comments to posts in backend
 - add make-comment link and machinery
-- get comments from post in webbel
 - decorate blogposts with the usual things like time
 - decorate blog listings to be a bit more enticing
 - favicon
+- shape blog posts to be nice looking
 - blog post dissimination: rank by tag
 - history of input commands, triggerable with 'up' button
-- fallenfrukt posts have gotten date from incorrect field
 - seapup sbcl-bin and add to upstart or whatever du-jour process manager
 - when fall-through rules, offer random post/quote
-- trim strings and whitespace from input before processing
-- implement pausing of terminal, in awaitance of ajax content
 - periodically refresh content-cache
 - add saving of conversations
 - support markdown text
+- subclass acceptor to use different certificates per domain on same host
 - add other categories besides blog posts
 
 laterish:
-- add 'there's more content' hint when there's more content at bottom of the page
-- downcase post request, cause that'd be a hassle
+- transfer image links plus jaded/frukt side-images to new blog if available
+- implement pausing of terminal, in awaitance of ajax content (not yet needed)
+- add conversation tree/standard yes/no, etc blocks
 - error handling of post parsing (atm this will often break)
 - in post objects, go from text-representation to proper localtime timestamp
 - put 'next' button under blog posts. Damn readable blog I have.
-- put eliza-rules.lisp in content and have something more generic
-for rule-sets (the idea being that seapup will explore some domain sometimes)
-- add sessions
--- add context-sensitivity
--- add conversation choices
 - think of punctuation processing conundrum
 - add user-support
 - searching/indexing of text
@@ -38,6 +28,19 @@ for rule-sets (the idea being that seapup will explore some domain sometimes)
 - hunchentoot output feedback to repl when firing form web-page [later me: ?]
 
 done:
+v - put eliza-rules.lisp in content and have something more generic
+    for rule-sets (the idea being that seapup will explore some domain sometimes)
+v - downcase post request, cause that'd be a hassle
+v - add 'there's more content' hint when there's more content at bottom of the page
+v - add sessions
+v - add context-sensitivity
+v - trim strings and whitespace from input before processing
+v - fallenfrukt posts have gotten date from incorrect field
+v - get comments from post in web
+v - add comments to posts in backend
+v - rejected - update hashlink when typing text/only-blog-names on user-interface
+v - irrelevant - add hashlink change knowledge in ajax responses
+v - when loading page, input hash string into terminal
 v - add mobile stylesheet/however you do that
 v - fix oldest-first instead of newest-first
 v - blog post dissimination: rank by year
