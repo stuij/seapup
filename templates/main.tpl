@@ -28,16 +28,17 @@
     </script>
   </head> 
   <body>
+    <div class="background"></div>
+    <div class="scroll-down-maybe">
+      <div class="scroll-down-maybe-inner"></div>
+    </div>
     <div id="output">
       <div id="padding">
       </div>
       <div id="top">Welcome to Seapup's cosy home!<br/>
         Type some stuff below if you feel like.
-      <br/><br/><br/>
+        <br/><br/><br/>
       </div>
-    </div>
-    <div class="scroll-down-maybe">
-      <div class="scroll-down-maybe-inner"></div>
     </div>
     <div class="input">
       <form class="input-form" autocomplete="off">
