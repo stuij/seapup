@@ -218,7 +218,10 @@
 
 (defun rule-based-translator 
     (input rules &key (matcher #'pat-match) 
-                   (rule-if #'first) (rule-then #'rest) (action #'sublis))
+                   (rule-if #'first)
+                   (rule-then #'rest)
+                   (action #'eliza-action)
+                   (context (make-instance 'pup-context)))
   "Find the first rule in rules that matches input,
   and apply the action to that rule."
   (some
@@ -226,7 +229,7 @@
        (let ((result (funcall matcher (funcall rule-if rule) 
                               input)))
          (if (not (eq result fail))
-             (funcall action result (funcall rule-then rule)))))
+             (funcall action result (funcall rule-then rule) context))))
    rules))
 
 ;;;;
@@ -300,15 +303,15 @@
 
 ;;;; eliza-pm: use advanced pattern matcher
 
-(defun use-eliza-rules (input rules)
+(defun use-eliza-rules (input rules context)
   "Find some rule with which to transform the input."
   (rule-based-translator input rules :rule-if #'first-chop
-                                             :action #'eliza-action))
+                                     :context context))
 
-(defun eliza-action (bindings responses)
+(defun eliza-action (bindings responses context)
   (let ((a-response (random-elt responses)))
     (let ((output (typecase a-response
                     (string (reg-match (switch-viewpoint bindings)
                                        a-response))
-                    (function (funcall a-response bindings)))))
+                    (function (funcall a-response bindings context)))))
       (format nil "~A" output))))

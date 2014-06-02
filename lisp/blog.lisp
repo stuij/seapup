@@ -2,11 +2,32 @@
 
 (defparameter *blog-posts* '())
 (defparameter *year-list* '())
+(defparameter *blog-post-context-token* 'blog-post)
 
-(defparameter +puppy-date-format+
-  ;; Sun, 06 Nov 1994 08:49:37
-  '(:short-weekday ", " (:day 2) #\space :short-month #\space (:year 4) #\space
-    (:hour 2) #\: (:min 2) #\: (:sec 2)))
+;; blog context
+(defparameter *blog-post-rules*
+  `((((%* %x) name (%* %y))
+     "i am not interested in names")
+    (((%* %x) comment (%* %y))
+     ,#'(lambda (bindings context)
+          (declare (ignorable bindings))
+          (format nil "You are about to make a dummy comment on blog post
+~A."
+                  (post-title (post-of context)))))))
+
+(defclass blog-post-context (pup-context)
+  ((post :initarg :post :accessor post-of)))
+
+(defun make-blog-post-context (post id)
+  (make-instance 'blog-post-context
+                 :post post
+                 :id id
+                 :rules *blog-post-rules*))
+
+(defun add-blog-post-context (post session)
+  (let ((id *blog-post-context-token*))
+    (remove-context id session)
+    (add-context id (make-blog-post-context post id) session)))
 
 ;; post
 (defstruct post
@@ -92,6 +113,12 @@
 
 
 ;; blogtacular
+(defparameter +puppy-date-format+
+  ;; Sun, 06 Nov 1994 08:49:37
+  '(:short-weekday ", " (:day 2) #\space
+    :short-month #\space (:year 4) #\space
+    (:hour 2) #\: (:min 2) #\: (:sec 2)))
+
 (defmacro bind-eliza-vars (vars bindings &body body)
   (let ((letforms (loop for v in vars
                         collect `(,v (get-eliza-var ,(symbol>string-downcase v) ,bindings)))))
@@ -161,13 +188,15 @@
           (print-posts (cdr (assoc year *year-list*)))
           "Sorry, found no posts for that year.."))))
 
-(defun blog-post (bindings)
+(defun blog-post (bindings context)
   (bind-eliza-vars (%y) bindings
-    (print-post (find-post %y))))
+    (print-post (find-post %y) context)))
 
-(defun print-post (post)
+(defun print-post (post context)
   (if post
-      (print-post-proper post)
+      (progn
+        (add-blog-post-context post (session-of context))
+        (print-post-proper post))
       "Sorry, couldn't find your post."))
 
 (defun print-post-proper (post)

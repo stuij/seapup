@@ -1,9 +1,9 @@
 (in-package :pup)
 
 (load-config)
-(context-init)
 
 (defparameter *acceptor* nil)
+(defparameter *last-session* nil)
 
 (defun start-server* (acceptor)
   (when (and *acceptor* (= (acceptor-port *acceptor*) (acceptor-port acceptor)))
@@ -84,7 +84,7 @@
 (defun handle-main ()
   (let ((*string-modifier* #'identity)
         (locales (get-locales))
-        (session (start-session)))
+        (session (start-puppy-session)))
     (dbg "static session:" session)
     (with-output-to-string (*default-template-output*)
       (fill-and-print-template (cave "templates/main.tpl")
@@ -92,13 +92,21 @@
                                  :debug ,(json:encode-json-to-string *debug-js*))))))
 
 (defun handle-ajax ()
-  (let ((session (start-session))
-        (json-data (hunchentoot:raw-post-data :force-text t)))
-    (dbg "ajax-session:" session)
+  (let ((json-data (hunchentoot:raw-post-data :force-text t)))
     (json-rpc:invoke-rpc json-data)))
 
-(json-rpc:defun-json-rpc eliza :guessing (data)
-  (eliza-fun data))
+(defun start-puppy-session ()
+  (let ((session (start-session)))
+    (unless (session-value 'context-tree session)
+      (context-init session))
+    (when *debug*
+      (setf *last-session* session))
+    session))
 
-(defun eliza-fun (data)
-  (eliza-grok data))
+(json-rpc:defun-json-rpc eliza :guessing (data)
+  (let ((session (start-puppy-session)))
+    (dbg "ajax-session:" session)
+    (eliza-fun data session)))
+
+(defun eliza-fun (data session)
+  (eliza-grok data session))
