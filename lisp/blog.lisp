@@ -100,7 +100,8 @@
 
 (defun parse-tags (post tail)
   (when tail
-    (setf (post-tags post) tail)))
+    (setf (post-tags post)
+          (split-sequence #\space tail :remove-empty-subseqs t))))
 
 (defun parse-title (post tail)
   (when tail
@@ -130,11 +131,11 @@
 
 (defun blog (bindings)
   (declare (ignorable bindings))
-  (let ((min-items (min (length *blog-posts*) 5)))
+  (let ((min-items (min (length (get-posts)) 5)))
     (if (> min-items 0)
         (strcat "The latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
 <br/><br/>"
-                (print-posts (subseq (reverse *blog-posts*) 0 min-items)))
+                (print-posts (subseq (reverse (get-posts)) 0 min-items)))
         "Got no blog posts for ya..")))
 
 (defun print-posts (posts)
@@ -142,6 +143,9 @@
     (loop for post in posts
           do (setf out (strcat out (get-post-summary post))))
     out))
+
+(defun get-posts ()
+  *blog-posts*)
 
 (defun get-post-summary (post)
   (let* ((title (post-title post))
@@ -155,6 +159,11 @@
 <span class='comments'>~R comment~:P</span><br/><br/>"
             tit-link summary no-comments)))
 
+(defun blog-link (post)
+  (let* ((title (post-title post))
+         (cmd (strcat "blog post " title)))
+    (format nil "https://awarewolf.io/#~A" cmd)))
+
 (defun get-summary (post)
   (let ((body (string-left-trim '(#\newline) (post-body post))))
     (subseq body 0 (position #\newline body))))
@@ -163,7 +172,7 @@
   (strcat "_-" txt "-__-" cmd "-_"))
 
 (defun make-year-list ()
-  (loop for post in *blog-posts*
+  (loop for post in (get-posts)
         do (let* ((y (timestamp-year (get-post-date post)))
                   (deletedp (post-deleted post)))
              (unless deletedp
@@ -227,7 +236,7 @@
           (post-body post)))
 
 (defun find-post (msg)
-  (loop for post in *blog-posts*
+  (loop for post in (get-posts)
         when (post-match-p post msg)
           return post))
 
