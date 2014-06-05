@@ -166,12 +166,12 @@ var terminal =
          };
 
          var get_IE_all_down = function () {
-             return document.body.scrollHeight - $(this).scrollTop() + 42
+             return document.body.scrollHeight - $(this).scrollTop() + 12
                  <= $(this).height() ? true : false;
          };
 
          var get_others_all_down = function () {             
-             return window.innerHeight + window.scrollY - 42 >= 
+             return window.innerHeight + window.scrollY - 12 >= 
                  document.body.offsetHeight ? true : false;
          };
 
@@ -239,14 +239,14 @@ var terminal =
          };
 
          var term_click = function (e) {
-             e.preventDefault();
+             // e.preventDefault();
              var msg = decode_hash(e.target.hash);
              if(msg) {
-                 put_hash_msg(msg);
+                 // put_hash_msg(msg);
                  user_input(msg);
              }
              focus_on_input();
-             return false; //for good measure
+             return e;
          };
 
          var massage_term_div = function ($div) {
