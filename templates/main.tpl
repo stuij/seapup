@@ -1,8 +1,21 @@
 <!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+<!-- Yay you're reading the source :)
+     The site is up on Github, for your viewing and forking pleasure: https://github.com/stuij/seapup -->
+
 <html>
   <head>
-    <title>Seapup</title>
+    <title>AwareWolf/Seapup</title>
+
+    <meta charset="UTF-8">
+    <meta name="description" content="A Seapup and an AwareWolf. Stuck in one head.">
+    <meta name="keywords" content="AwareWolf, Seapup, wolf, pup, Common Lisp, robot, lost at sea, AI winter is coming">
+    <meta name="author" content="Ties Stuij">
+
+    <link rel="alternate" type="application/rss+xml" title="Awarewolf/Seapup Feed" href="http://awarewolf.io/feed?cat=all"/>
+
+    <!-- Automatic favicon resizings done by the very handy http://realfavicongenerator.net -->
     <link rel="shortcut icon" href="/static/img/favicons/favicon.ico">
     <link rel="apple-touch-icon" sizes="57x57" href="/static/img/favicons/apple-touch-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="114x114" href="/static/img/favicons/apple-touch-icon-114x114.png">
@@ -21,8 +34,8 @@
     <meta name="msapplication-TileImage" content="/static/img/favicons/mstile-144x144.png">
     <meta name="msapplication-config" content="/static/img/favicons/browserconfig.xml">
     
-    <link type="text/css" href="/static/css/pup.css" rel="stylesheet"/>    
-    <link id="size-stylesheet" type="text/css" rel="stylesheet" href="/static/css/wide.css" /> 
+    <link type="text/css" href="/static/css/pup.css" rel="stylesheet"/>
+    <link id="size-stylesheet" type="text/css" rel="stylesheet" href="/static/css/wide.css"/>
 
     <!--[if lt ie 7]>
         <style type="text/css">
@@ -30,7 +43,6 @@
         </style>
         <![endif]-->
     
-    <!-- <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>-->
     <script type="text/javascript">
       debug=<!-- TMPL_VAR debug -->;
       acceptI18ns=<!-- TMPL_VAR accept-i18ns -->;
