@@ -48,15 +48,6 @@
   (setf (session-value 'context-tree session) '())
   (setf (session-value 'context-catch-all session) '()))
 
-(defun load-contexts ()
-  (cl-fad:walk-directory
-   (cave "content/context")
-   (lambda (file)
-     (load file))
-   :test (lambda (file)
-           (equal (pathname-type file)
-                  "lisp"))))
-
 ;; place-holder
 ;; rule return options can be strings or fns
 (defparameter *base-rules*
@@ -74,7 +65,6 @@
 
 ;; machinations
 (defun context-init (session)
-  (load-contexts)
   (let ((base-context (make-instance 'pup-context
                                      :id 'base-context
                                      :rules *base-rules*
@@ -104,3 +94,15 @@
   (let ((catch-alist (cdr (random-elt
                            (session-value 'context-catch-all session)))))
     (funcall (car catch-alist) input (cdr catch-alist))))
+
+(defun load-contexts ()
+  (cl-fad:walk-directory
+   (cave "content/context")
+   (lambda (file)
+     (load file))
+   :test (lambda (file)
+           (and (equal (pathname-type file)
+                  "lisp")
+                (not (find #\# (namestring file)))))))
+
+(load-contexts)
