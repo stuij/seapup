@@ -50,7 +50,8 @@
   (regex-dispatchers '(;; page callbacks
                        ("^/$" . handle-main)
                        ("^/static.*" . handle-static)
-                       ("^/ajax.*" . handle-ajax))))
+                       ("^/ajax.*" . handle-ajax)
+                       ("^/feed.*" . handle-feed))))
 
 (defun handle-static ()
   (handle-static-pup (subseq (request-uri*) 8))) ;; chop off '/static/'
@@ -68,8 +69,8 @@
 
 (defun handle-main ()
   (let ((*string-modifier* #'identity)
-        (locales (get-locales))
-        (session (start-puppy-session)))
+        (locales (get-locales)))
+    (start-puppy-session)
     (with-output-to-string (*default-template-output*)
       (fill-and-print-template (cave "templates/main.tpl")
                                `(:accept-i18ns ,locales
@@ -78,6 +79,10 @@
 (defun handle-ajax ()
   (let ((json-data (hunchentoot:raw-post-data :force-text t)))
     (json-rpc:invoke-rpc json-data)))
+
+(defun handle-feed ()
+  (let ((category (get-parameter "cat")))
+    (rss (or category "all"))))
 
 (defun start-puppy-session ()
   (let ((session (start-session)))
