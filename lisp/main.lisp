@@ -43,21 +43,6 @@
            (bt:join-thread (hunchentoot::acceptor-process
                             (hunchentoot::acceptor-taskmaster *acceptor*))))
 
-
-(defun alist-keys (alist)
-  "Like HASH-TABLE-KEYS."
-  (mapcar #'car alist))
-
-(defun alist-values (alist)
-  "Like HASH-TABLE-VALUES."
-  (mapcar #'cdr alist))
-
-(defun map-alist (function alist)
-  "Map over `alist'. `function' takes the CAR and CDR, and should
-   return a new CDR."
-  (loop for (car . cdr) in alist
-        collect (cons car (funcall function car cdr))))
-
 (defun regex-dispatchers (regexes/handlers)
   (alist-values (map-alist #'create-regex-dispatcher regexes/handlers)))
 
@@ -85,7 +70,6 @@
   (let ((*string-modifier* #'identity)
         (locales (get-locales))
         (session (start-puppy-session)))
-    (dbg "static session:" session)
     (with-output-to-string (*default-template-output*)
       (fill-and-print-template (cave "templates/main.tpl")
                                `(:accept-i18ns ,locales
@@ -105,7 +89,6 @@
 
 (json-rpc:defun-json-rpc eliza :guessing (data)
   (let ((session (start-puppy-session)))
-    (dbg "ajax-session:" session)
     (eliza-fun data session)))
 
 (defun eliza-fun (data session)
