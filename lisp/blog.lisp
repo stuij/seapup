@@ -55,7 +55,7 @@
   (if (post-body post)
       (setf (post-body post)
             (strcat (post-body post) "
-</br>" line))
+<br/>" line))
       (parse-content-item post line)))
 
 (defun parse-content-item (post line)
@@ -187,8 +187,8 @@
 (defun print-just-years ()
   (let ((years (loop for y in *year-list*
                      collect (format nil "_-~A-__-blog year ~A-_" (car y) (car y)))))
-    (format nil "Blog years (pick one):</br></br>
-~{~A~^</br>~}" years)))
+    (format nil "Blog years (pick one):<br/><br/>
+~{~A~^<br/>~}" years)))
 
 (defun print-blog-year-posts (bindings)
   (bind-eliza-vars (%y) bindings
