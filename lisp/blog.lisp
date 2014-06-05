@@ -3,6 +3,7 @@
 (defparameter *blog-posts* '())
 (defparameter *year-list* '())
 (defparameter *blog-post-context-token* 'blog-post)
+(defparameter *br* "<br>")
 
 ;; blog context
 (defparameter *blog-post-rules*
@@ -55,7 +56,7 @@
   (if (post-body post)
       (setf (post-body post)
             (strcat (post-body post) "
-<br/>" line))
+" *br* line))
       (parse-content-item post line)))
 
 (defun parse-content-item (post line)
@@ -134,7 +135,7 @@
   (let ((min-items (min (length (get-posts)) 5)))
     (if (> min-items 0)
         (strcat "The latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
-<br/><br/>"
+" *br* *br*
                 (print-posts (subseq (reverse (get-posts)) 0 min-items)))
         "Got no blog posts for ya..")))
 
@@ -155,9 +156,9 @@
          (no-comments (length (post-comments post))))
     (format nil "
 ~A
-~A<br/>
+~A~A
 <span class='comments'>~R comment~:P</span><br/><br/>"
-            tit-link summary no-comments)))
+            tit-link summary *br* no-comments)))
 
 (defun blog-link (post)
   (let* ((title (post-title post))
