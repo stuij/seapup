@@ -11,7 +11,6 @@
    (:file "common")
    (:file "mp2eliza")
    (:file "blog")
-   (:file "action-rules")
    (:file "context")
    (:file "rss")
    (:file "main")))
