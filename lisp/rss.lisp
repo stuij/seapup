@@ -22,21 +22,23 @@
            (:|url| "http://awarewolf.io/static/img/favicons/favicon-196x196.png")
            (:|title| "Awarewolf/Seapup")
            (:|link| "https://awarewolf.io"))         
-         (loop for post in (subseq (reverse (get-posts)) 0 15)
-               do (cl-who:htm (:|item|
-                                (:|title| (cl-who:esc (post-title post)))
-                                (:|link| (cl-who:esc (blog-link post)))
-                                (:|dc:creator| (cl-who:str "<![CDATA[Ties Stuij]]>"))
-                                (:|slash:comments| (cl-who:str (length (post-comments post))))
-                                (loop for cat in (post-tags post)
-                                      do (cl-who:htm
-                                          (:|category|
-                                            (cl-who:str (format nil "<![CDATA[~A]]>" cat)))))
-                                (:|guid| (cl-who:esc (blog-link post)))
-                                (:|description| (cl-who:str (format nil "<![CDATA[~A]]>" (get-summary post))))
-                                (:|content:encoded| (cl-who:str (format nil "<![CDATA[~A]]>" (post-body post))))
-                                (:|pubDate| (cl-who:str (format-timestring
-                                                         nil
-                                                         (get-post-date post)
-                                                         :format  +rfc-1123-format+)))))))))))
+         (let* ((all-posts (reverse (get-posts-by-tag)))
+                (posts (subseq all-posts 0 (min 15 (length all-posts)))))
+           (loop for post in posts
+                 do (cl-who:htm (:|item|
+                                  (:|title| (cl-who:esc (post-title post)))
+                                  (:|link| (cl-who:esc (blog-link post)))
+                                  (:|dc:creator| (cl-who:str "<![CDATA[Ties Stuij]]>"))
+                                  (:|slash:comments| (cl-who:str (length (post-comments post))))
+                                  (loop for cat in (post-tags post)
+                                        do (cl-who:htm
+                                            (:|category|
+                                              (cl-who:str (format nil "<![CDATA[~A]]>" cat)))))
+                                  (:|guid| (cl-who:esc (blog-link post)))
+                                  (:|description| (cl-who:str (format nil "<![CDATA[~A]]>" (get-summary post))))
+                                  (:|content:encoded| (cl-who:str (format nil "<![CDATA[~A]]>" (post-body post))))
+                                  (:|pubDate| (cl-who:str (format-timestring
+                                                           nil
+                                                           (get-post-date post)
+                                                           :format  +rfc-1123-format+))))))))))))
 
