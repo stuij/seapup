@@ -22,7 +22,7 @@
            (:|url| "http://awarewolf.io/static/img/favicons/favicon-196x196.png")
            (:|title| "Awarewolf/Seapup")
            (:|link| "https://awarewolf.io"))         
-         (let* ((all-posts (reverse (get-posts-by-tag)))
+         (let* ((all-posts (reverse (get-posts-by-tag category)))
                 (posts (subseq all-posts 0 (min 15 (length all-posts)))))
            (loop for post in posts
                  do (cl-who:htm (:|item|

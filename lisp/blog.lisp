@@ -280,4 +280,8 @@
   (setf *year-list* '())
   (make-year-list))
 
+(defun get-posts-by-tag (tag)
+  (declare (ignorable tag))
+  (get-posts))
+
 (reparse-content)
