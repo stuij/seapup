@@ -9,6 +9,8 @@ body, html
   padding: 0px;
   }
 
+a {color: #6ca6cd; text-decoration: none;} /* deep sky blue 3 */
+
 .scroll-down-maybe
 {
   z-index: -1;
@@ -40,8 +42,6 @@ body, html
   background-repeat: no-repeat;
   background-position: right bottom;
   }
-
-a {color: #6ca6cd; text-decoration: none;} /* deep sky blue 3 */
 
 #output
 { margin-left: auto;
@@ -83,32 +83,13 @@ a {color: #6ca6cd; text-decoration: none;} /* deep sky blue 3 */
   font-size: 1em;
   }
 
-#input-input
-{
-  color: #ffa07a; /* light salmon */  
-  }
+.timestamp { color: #696969;
 
-.eliza
-{
-  padding-bottom: 28px;
-  }
+             }
 
-.user
-{
-  padding-bottom: 12px;
-  }
-
-.user-input
-{
-  color: #ffa07a; /* light salmon */
-  }
-
-.comments
-{
-  color: #696969;
-  }
-
-.timestamp
-{
-  color: #696969;
-  }
+#input-input { color: #ffa07a; /* light salmon */ }
+.eliza { padding-bottom: 28px; }
+.user { padding-bottom: 12px; }
+.user-input { color: #ffa07a; /* light salmon */ }
+.comments { color: #696969; }
+.comment-head { display: inline }

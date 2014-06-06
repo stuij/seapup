@@ -3,7 +3,6 @@
 (defparameter *blog-posts* '())
 (defparameter *year-list* '())
 (defparameter *blog-post-context-token* 'blog-post)
-(defparameter *br* "<br>")
 
 ;; blog context
 (defparameter *blog-post-rules*
@@ -50,13 +49,20 @@
       (setf (post-path post) path)
       (loop for line = (read-line stream nil)
             while line do (parse-content-line post line))
+      (when (post-body post)
+        (let* ((body (with-output-to-string (out)
+                       (3bmd:parse-string-and-print-to-stream
+                        (post-body post) out)))
+               (clean-body (string-trim '(#\Space #\Tab #\Newline)
+                                        body)))
+          (setf (post-body post) clean-body)))
       post)))
 
 (defun parse-content-line (post line)
   (if (post-body post)
       (setf (post-body post)
             (strcat (post-body post) "
-" *br* line))
+" line))
       (parse-content-item post line)))
 
 (defun parse-content-item (post line)
@@ -135,9 +141,11 @@
   (let ((min-items (min (length (get-posts)) 5)))
     (if (> min-items 0)
         (strcat "The latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
-" *br* *br*
-                (print-posts (subseq (reverse (get-posts)) 0 min-items)))
-        "Got no blog posts for ya..")))
+<br/>
+<br/>
+"
+(print-posts (subseq (reverse (get-posts)) 0 min-items)))
+"Got no blog posts for ya..")))
 
 (defun print-posts (posts)
   (let* ((out ""))
@@ -156,9 +164,9 @@
          (no-comments (length (post-comments post))))
     (format nil "
 ~A
-~A~A
-<span class='comments'>~R comment~:P</span><br/><br/>"
-            tit-link summary *br* no-comments)))
+~A
+<span class='comments'>~R comment~:P</span><br/><br/><br/>"
+            tit-link summary no-comments)))
 
 (defun blog-link (post)
   (let* ((title (post-title post))
@@ -166,8 +174,14 @@
     (format nil "https://awarewolf.io/#~A" cmd)))
 
 (defun get-summary (post)
-  (let ((body (string-left-trim '(#\newline) (post-body post))))
-    (subseq body 0 (position #\newline body))))
+  (let* ((body (post-body post))
+         (sub (subseq body 0 (position #\newline body))))
+    (remove-paragraph sub)))
+
+(defun remove-paragraph (p)
+  (register-groups-bind (middle)
+      ("<p>(.*)</p>" p)
+    middle))
 
 (defun cmd-link (cmd txt)
   (strcat "_-" txt "-__-" cmd "-_"))
@@ -210,10 +224,10 @@
       "Sorry, couldn't find your post."))
 
 (defun print-post-proper (post)
-  (format nil "<br/>
-~A<br/>
-<span class='timestamp'>~A</span><br/>
-~A<br/><br/>
+  (format nil "
+<div class='title'>~A</div>
+<div class='timestamp'>~A</div>
+~A
 ~A"
           (post-title post)
           (print-blog-date (post-created post))
@@ -229,12 +243,12 @@
       (setf out (strcat out (print-single-comment c))))))
 
 (defun print-single-comment (post)
-  (format nil "<br/>
-<span class='timestamp'>on ~A ~A said:</span>
-~A<br/><br/>"
+  (format nil "
+<br/><div class='timestamp'>on ~A ~A said:</div>
+~A"
           (print-blog-date (post-created post))
           (post-author post)
-          (post-body post)))
+          (regex-replace "<p>" (post-body post) "<p class='comment-head'>")))
 
 (defun find-post (msg)
   (loop for post in (get-posts)
