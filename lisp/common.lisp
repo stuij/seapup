@@ -79,21 +79,21 @@
     (format nil "~A://~A~A/~A" *link-protocol* *link-host* port trail)))
 
 (defun img-link (img desc)
-  (let* ((img-trail (strcat "static/img/" img))
-         (href (site-href img-trail))
-         (img (format nil "<img class='site-img' src='~A' alt='~A' />"
-                      href
-                      desc)))
-    (register-groups-bind (dirs file)
-        ("(.*/)(.*)" img-trail)
-      (let ((img-ref (strcat dirs "orig/" file)))
-        (format nil "
+  (register-groups-bind (dirs file)
+      ("(.*/)(.*)" (strcat "static/img/content/" img))
+    (let* ((img-trail-site  (strcat dirs "site/" file))
+           (img-trail-orig  (strcat dirs "orig/" file))
+           (href (site-href img-trail-site))
+           (img (format nil "<img class='site-img' src='~A' alt='~A' />"
+                        href
+                        desc)))
+      (format nil "
 <div class='img-container'>
   <div class='img-div'>~A</div>
   <div class='img-txt'>~A</div>
 </div>"
-                (site-link img img-ref "img-link")
-                desc)))))
+              (site-link img img-trail-orig "img-link")
+              desc))))
 
 ;; make 3bmd handle pup-style wiki-like links
 (setf 3bmd-wiki:*wiki-links* t)
