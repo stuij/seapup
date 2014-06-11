@@ -4,6 +4,7 @@
 
 (defparameter *acceptor* nil)
 (defparameter *last-session* nil)
+(defparameter *last-request* nil)
 
 (defun start-server* (acceptor)
   (when (and *acceptor* (= (acceptor-port *acceptor*) (acceptor-port acceptor)))
@@ -89,7 +90,8 @@
     (unless (session-value 'context-tree session)
       (context-init session))
     (when *debug*
-      (setf *last-session* session))
+      (setf *last-session* session)
+      (setf *last-request* *request*))
     session))
 
 (json-rpc:defun-json-rpc eliza :guessing (data)

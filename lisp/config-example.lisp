@@ -4,6 +4,10 @@
 (defparameter *port* 4242)
 (defparameter *ssl-port* 4433)
 
+(defparameter *link-host* "192.168.130.138")
+(defparameter *link-port* 4242)
+(defparameter *link-protocol* "http")
+
 (setf *session-max-time* 525600)
 
 ;; this in effect muffles the specialized upon error when naked like this

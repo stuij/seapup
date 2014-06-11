@@ -63,6 +63,55 @@
         (load file)
         (error "Seapup config file doesn't exist. Please copy seapup/lisp/code/config-example.lisp into seapup/volatile/config/config.lisp and edit appropriately."))))
 
+(defun cmd-link (cmd label)
+  (site-link label (format nil "#~A" cmd) "termLink"))
+
+(defun site-link (label trail class)
+  (format nil "<a class='~A' href='~A'>~A</a>"
+          class
+          (site-href trail)
+          label))
+
+(defun site-href (trail)
+  (let ((port (if (eql *link-port* 80)
+                  ""
+                  (format nil ":~A" *link-port*))))
+    (format nil "~A://~A~A/~A" *link-protocol* *link-host* port trail)))
+
+(defun img-link (img desc)
+  (let* ((img-trail (strcat "static/img/" img))
+         (href (site-href img-trail))
+         (img (format nil "<img class='site-img' src='~A' alt='~A' />"
+                      href
+                      desc)))
+    (register-groups-bind (dirs file)
+        ("(.*/)(.*)" img-trail)
+      (let ((img-ref (strcat dirs "orig/" file)))
+        (format nil "
+<div class='img-container'>
+  <div class='img-div'>~A</div>
+  <div class='img-txt'>~A</div>
+</div>"
+                (site-link img img-ref "img-link")
+                desc)))))
+
+;; make 3bmd handle pup-style wiki-like links
+(setf 3bmd-wiki:*wiki-links* t)
+(defclass pup-md () ())
+(setf 3bmd-wiki:*wiki-processor* (make-instance 'pup-md))
+
+(defmethod 3bmd-wiki::process-wiki-link ((p pup-md) nt ft args stream)
+  (declare (ignorable p))
+  (let ((link (first args))
+        (scanner (ppcre:create-scanner ".*\.(jpg|png|gif)$"
+                                       :case-insensitive-mode t)))
+    (if (ppcre:scan scanner link)
+        (format stream (img-link link ft))
+        (format stream (cmd-link link ft)))))
+
+#++ (with-output-to-string (s)
+      (3bmd:parse-string-and-print-to-stream "[[bla bla|blog post]]" s))
+
 
 #|
 ;; log5 is a bit heavy for now. If things ever get complex, We know where to go
@@ -73,9 +122,9 @@
 
 (defun start-app-logging ()
   (log5:start-sender 'app-log 
-   (log5:stream-sender :location *app-log-pathname*)  
-   :category-spec '(app)  
-   :output-spec '(log5:time log5:category log5:message)))
+                     (log5:stream-sender :location *app-log-pathname*)  
+                     :category-spec '(app)  
+                     :output-spec '(log5:time log5:category log5:message)))
 
 (start-app-logging)
 |#

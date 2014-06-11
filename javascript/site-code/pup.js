@@ -209,7 +209,7 @@ var terminal =
          var user_output = function (string, id) {
              var $msg = $("<div class='termSliver' id='termId" + id + "'>");
              $msg.append("<div class=user>> <span class='user-input'>" 
-                         + massage_msg(string) + "</span></div>");
+                         + string + "</span></div>");
              $out.append($msg);
              massage_term_div($msg);
              scrollTo($msg);
@@ -221,7 +221,7 @@ var terminal =
 
          var output_result = function (id, string) {
              var $div = $("#termId" + id);
-             $div.append("<div class=eliza>" +massage_msg(string) + "</div>");
+             $div.append("<div class=eliza>" + string + "</div>");
              massage_term_div($div);
              scrollTo($div);
          };
@@ -229,13 +229,6 @@ var terminal =
          var make_term_url = function (msg) {
              var l = window.location;
              return l.protocol + "//" + l.host + l.pathname + "#" + msg;  
-         };
-
-         var replace_regex_tokens = function (match, msg_name, msg_val, offset, string) {
-             var enc_msg = encodeURIComponent(msg_val);
-             var url = make_term_url(enc_msg);
-             return "<a class='termLink' href=\"" + url + "\"'>" 
-                 + msg_name + "</a>";
          };
 
          var term_click = function (e) {
@@ -252,10 +245,7 @@ var terminal =
          var massage_term_div = function ($div) {
              $(".termLink", $div).click(term_click);
              $("a:external", $div).attr('target', '_blank');
-         };
-
-         var massage_msg = function (msg) {
-             return msg.replace(/_-(.*?)-__-(.*?)-_/g, replace_regex_tokens);
+             $(".img-link", $div).attr('target', '_blank');
          };
 
          var pause = function () {

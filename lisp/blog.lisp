@@ -39,10 +39,12 @@
   tags
   title
   author
+  summary
   body
   comments
   path)
 
+;; parse
 (defun parse-content (path)
   (with-open-file (stream path)
     (let ((post (make-post)))
@@ -119,146 +121,6 @@
       (setf (post-body post) tail)
       (setf (post-body post) "")))
 
-
-;; blogtacular
-(defparameter +puppy-date-format+
-  ;; Sun, 06 Nov 1994 08:49:37
-  '(:short-weekday ", " (:day 2) #\space
-    :short-month #\space (:year 4) #\space
-    (:hour 2) #\: (:min 2) #\: (:sec 2)))
-
-(defmacro bind-eliza-vars (vars bindings &body body)
-  (let ((letforms (loop for v in vars
-                        collect `(,v (get-eliza-var ,(symbol>string-downcase v) ,bindings)))))
-    `(let ,letforms
-       ,@body)))
-
-(defun get-eliza-var (var bindings)
-  (rest (assoc var bindings :test 'string-equal)))
-
-(defun blog (bindings)
-  (declare (ignorable bindings))
-  (let ((min-items (min (length (get-posts)) 5)))
-    (if (> min-items 0)
-        (strcat "The latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
-<br/>
-<br/>
-"
-(print-posts (subseq (reverse (get-posts)) 0 min-items)))
-"Got no blog posts for ya..")))
-
-(defun print-posts (posts)
-  (let* ((out ""))
-    (loop for post in posts
-          do (setf out (strcat out (get-post-summary post))))
-    out))
-
-(defun get-posts ()
-  *blog-posts*)
-
-(defun get-post-summary (post)
-  (let* ((title (post-title post))
-         (cmd (strcat "blog post " title))
-         (tit-link (cmd-link cmd title))
-         (summary (get-summary post))
-         (no-comments (length (post-comments post))))
-    (format nil "
-~A
-~A
-<span class='comments'>~R comment~:P</span><br/><br/><br/>"
-            tit-link summary no-comments)))
-
-(defun blog-link (post)
-  (let* ((title (post-title post))
-         (cmd (strcat "blog post " title)))
-    (format nil "https://awarewolf.io/#~A" cmd)))
-
-(defun get-summary (post)
-  (let* ((body (post-body post))
-         (sub (subseq body 0 (position #\newline body))))
-    (remove-paragraph sub)))
-
-(defun remove-paragraph (p)
-  (register-groups-bind (middle)
-      ("<p>(.*)</p>" p)
-    middle))
-
-(defun cmd-link (cmd txt)
-  (strcat "_-" txt "-__-" cmd "-_"))
-
-(defun make-year-list ()
-  (loop for post in (get-posts)
-        do (let* ((y (timestamp-year (get-post-date post)))
-                  (deletedp (post-deleted post)))
-             (unless deletedp
-               (push-year-list y post)))))
-
-(defun push-year-list (key val)
-  (let ((lst (assoc key *year-list*)))
-    (if lst
-        (setf (cdr (assoc key *year-list*)) (append (cdr lst) (list val)))
-        (setf *year-list* (acons key (list val) *year-list*)))))
-
-(defun print-just-years ()
-  (let ((years (loop for y in *year-list*
-                     collect (format nil "_-~A-__-blog year ~A-_" (car y) (car y)))))
-    (format nil "Blog years (pick one):<br/><br/>
-~{~A~^<br/>~}" years)))
-
-(defun print-blog-year-posts (bindings)
-  (bind-eliza-vars (%y) bindings
-    (let ((year (parse-integer (print-with-spaces %y) :junk-allowed t)))
-      (if year
-          (print-posts (cdr (assoc year *year-list*)))
-          "Sorry, found no posts for that year.."))))
-
-(defun blog-post (bindings context)
-  (bind-eliza-vars (%y) bindings
-    (print-post (find-post %y) context)))
-
-(defun print-post (post context)
-  (if post
-      (progn
-        (add-blog-post-context post (session-of context))
-        (print-post-proper post))
-      "Sorry, couldn't find your post."))
-
-(defun print-post-proper (post)
-  (format nil "
-<div class='title'>~A</div>
-<div class='timestamp'>~A</div>
-~A
-~A"
-          (post-title post)
-          (print-blog-date (post-created post))
-          (post-body post)
-          (print-comments post)))
-
-(defun print-blog-date (date)
-  (format-timestring nil date :format +puppy-date-format+))
-
-(defun print-comments (post)
-  (let ((out ""))
-    (dolist (c (post-comments post) out)
-      (setf out (strcat out (print-single-comment c))))))
-
-(defun print-single-comment (post)
-  (format nil "
-<br/><div class='timestamp'>on ~A ~A said:</div>
-~A"
-          (print-blog-date (post-created post))
-          (post-author post)
-          (regex-replace "<p>" (post-body post) "<p class='comment-head'>")))
-
-(defun find-post (msg)
-  (loop for post in (get-posts)
-        when (post-match-p post msg)
-          return post))
-
-(defun post-match-p (post msg)
-  (let ((title (line-to-eliza (post-title post))))
-    (tree-equal title msg :test #'string-equal)))
-
 (defun walk-blog-dirs (dir)
   (let ((post nil)
         (comments '()))
@@ -281,11 +143,6 @@
         (when comments
           (err "there were comments, but no blog-post in dir " dir)))))
 
-(defun get-post-date (post)
-  (if (post-published post)
-      (post-published post)
-      (post-created post)))
-
 (defun reparse-content ()
   (setf *blog-posts* '())
   (walk-blog-dirs (cave "content/text/blog"))
@@ -295,8 +152,152 @@
   (setf *year-list* '())
   (make-year-list))
 
+
+;; blogtacular
+;; blog summary
+(defun blog (bindings)
+  (declare (ignorable bindings))
+  (let ((min-items (min (length (get-posts)) 5)))
+    (if (> min-items 0)
+        (strcat "The latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
+<br/>
+<br/>
+"
+                (print-posts (subseq (reverse (get-posts)) 0 min-items)))
+        "Got no blog posts for ya..")))
+
+(defun get-post-summary (post)
+  (let* ((tit-link (blog-link post))
+         (summary (get-summary post))
+         (no-comments (length (post-comments post))))
+    (format nil "
+~A
+~A < ... >
+<span class='comments'>~R comment~:P</span><br/><br/><br/>"
+            tit-link summary no-comments)))
+
+(defun print-posts (posts)
+  (let* ((out ""))
+    (loop for post in posts
+          do (setf out (strcat out (get-post-summary post))))
+    out))
+
+(defun blog-link (post)
+  (let* ((title (post-title post))
+         (cmd (strcat "blog post " title)))
+    (cmd-link cmd title)))
+
+(defun get-summary (post)
+  (let* ((body (post-body post))
+         (sub (subseq body 0 (position #\newline body))))
+    (remove-paragraph sub)))
+
+(defun remove-paragraph (p)
+  (register-groups-bind (middle)
+      ("<p>(.*)</p>" p)
+    middle))
+
+
+;; years
+(defun make-year-list ()
+  (loop for post in (get-posts)
+        do (let* ((y (timestamp-year (get-post-date post)))
+                  (deletedp (post-deleted post)))
+             (unless deletedp
+               (push-year-list y post)))))
+
+(defun push-year-list (key val)
+  (let ((lst (assoc key *year-list*)))
+    (if lst
+        (setf (cdr (assoc key *year-list*)) (append (cdr lst) (list val)))
+        (setf *year-list* (acons key (list val) *year-list*)))))
+
+(defun print-just-years ()
+  (let ((years (loop for y in *year-list*
+                     collect (cmd-link (format nil "blog year ~A" (car y))
+                                       (car y)))))
+    (format nil "Blog years (pick one):<br/><br/>
+~{~A~^<br/>~}" years)))
+
+(defun print-blog-year-posts (bindings)
+  (bind-eliza-vars (%y) bindings
+    (let ((year (parse-integer (print-with-spaces %y) :junk-allowed t)))
+      (if year
+          (print-posts (cdr (assoc year *year-list*)))
+          "Sorry, found no posts for that year.."))))
+
+
+;; single post
+(defun blog-post (bindings context)
+  (bind-eliza-vars (%y) bindings
+    (print-post (find-post %y) context)))
+
+(defun print-post (post context)
+  (if post
+      (progn
+        (add-blog-post-context post (session-of context))
+        (print-post-proper post))
+      "Sorry, couldn't find your post."))
+
+(defun print-post-proper (post)
+  (format nil "
+<br/>
+<div class='title'>~A</div>
+<div class='timestamp'>~A</div>
+~A<br/>
+~A"
+          (post-title post)
+          (print-blog-date (post-created post))
+          (post-body post)
+          (print-comments post)))
+
+(defun print-blog-date (date)
+  (format-timestring nil date :format +puppy-date-format+))
+
+(defun print-comments (post)
+  (let ((out ""))
+    (when (post-comments post)
+      (setf out "comments</br>
+"))
+    (dolist (c (post-comments post) out)
+      (setf out (strcat out (print-single-comment c))))))
+
+(defun print-single-comment (post)
+  (format nil "
+<br/><div class='timestamp'>on ~A ~A said:</div>
+~A<br/>"
+          (print-blog-date (post-created post))
+          (post-author post)
+          (regex-replace "<p>" (post-body post) "<p class='comment-head'>")))
+
+(defun find-post (msg)
+  (loop for post in (get-posts)
+        when (post-match-p post msg)
+          return post))
+
+(defun post-match-p (post msg)
+  (let ((title (line-to-eliza (post-title post))))
+    (tree-equal title msg :test #'string-equal)))
+
+
+;; general stuff
+(defparameter +puppy-date-format+
+  ;; Sun, 06 Nov 1994 08:49:37
+  '(:short-weekday ", " (:day 2) #\space
+    :short-month #\space (:year 4) #\space
+    (:hour 2) #\: (:min 2) #\: (:sec 2)))
+
+(defun get-posts ()
+  *blog-posts*)
+
+(defun get-post-date (post)
+  (if (post-published post)
+      (post-published post)
+      (post-created post)))
+
 (defun get-posts-by-tag (tag)
   (declare (ignorable tag))
   (get-posts))
 
+;; an actual function call
 (reparse-content)

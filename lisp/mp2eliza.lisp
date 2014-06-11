@@ -315,3 +315,13 @@
                                        a-response))
                     (function (funcall a-response bindings context)))))
       (format nil "~A" output))))
+
+(defmacro bind-eliza-vars (vars bindings &body body)
+  (let ((letforms (loop for v in vars
+                        collect `(,v (get-eliza-var
+                                      ,(symbol>string-downcase v) ,bindings)))))
+    `(let ,letforms
+       ,@body)))
+
+(defun get-eliza-var (var bindings)
+  (rest (assoc var bindings :test 'string-equal)))

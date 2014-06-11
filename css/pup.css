@@ -3,6 +3,7 @@
 body, html
 {
   font-family: helvetica;
+  font-size: 100%;
   color: #aaa;
   border: none;
   margin: 0px;
@@ -80,14 +81,22 @@ a {color: #6ca6cd; text-decoration: none;} /* deep sky blue 3 */
   border-style: solid;
   border-color: aaa;
   font-family: inherit;
-  font-size: 1em;
   }
 
-.timestamp { color: #696969;
+.timestamp
+{ color: #696969;
+  font-size: 0.9em;
+  }
 
-             }
+.img-txt
+{ color: #696969;
+  font-size: 0.9em;
+  }
 
-#input-input { color: #ffa07a; /* light salmon */ }
+.title { font-size: 1.4em; }
+
+#input-input { color: #ffa07a; /* light salmon */
+               font-size: 1em; }
 .eliza { padding-bottom: 28px; }
 .user { padding-bottom: 12px; }
 .user-input { color: #ffa07a; /* light salmon */ }
