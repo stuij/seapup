@@ -1,7 +1,5 @@
 (in-package :pup)
 
-(setf cl-who:*downcase-tokens-p* nil)
-
 (defun rss (category)
   (let ((cat-url (format nil "http://awarewolf.io/feed?cat=~A" category)))
     (cl-who:with-html-output-to-string (s nil :prologue "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>")

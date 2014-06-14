@@ -15,6 +15,7 @@
 
     <link rel="alternate" type="application/rss+xml" title="Awarewolf/Seapup Feed" href="http://awarewolf.io/feed?cat=all"/>
 
+    
     <!-- Automatic favicon resizings done by the very handy http://realfavicongenerator.net -->
     <link rel="shortcut icon" href="/static/img/favicons/favicon.ico">
     <link rel="apple-touch-icon" sizes="57x57" href="/static/img/favicons/apple-touch-icon-57x57.png">
@@ -35,7 +36,11 @@
     <meta name="msapplication-config" content="/static/img/favicons/browserconfig.xml">
     
     <link type="text/css" href="/static/css/pup.css" rel="stylesheet"/>
-    <link id="size-stylesheet" type="text/css" rel="stylesheet" href="/static/css/wide.css"/>
+
+    <!-- doubling stylesheet setting here and in js to cover more browser/settings combinations <sigh/> -->
+    <link rel="stylesheet" media="only screen and (max-width: 599px)" href="/static/css/narrow.css" />
+    <link rel="stylesheet" media="only screen and (min-width: 600px) and (max-width: 699px)" href="/static/css/middle.css" />
+    <link id="size-stylesheet" type="text/css" rel="stylesheet" media="screen and (min-width: 700px)" href="/static/css/wide.css" />
 
     <!--[if lt ie 7]>
         <style type="text/css">
@@ -44,12 +49,12 @@
         <![endif]-->
     
     <script type="text/javascript">
-      debug=<!-- TMPL_VAR debug -->;
-      acceptI18ns=<!-- TMPL_VAR accept-i18ns -->;
+      var debug=<!-- TMPL_VAR debug -->;
+      var acceptI18ns=<!-- TMPL_VAR accept-i18ns -->;
+      var session_id="<!-- TMPL_VAR session-val -->";
     </script>
     <script type="text/javascript" src="/static/js/contrib/jquery-1.9.1.js"></script>
-    <script type="text/javascript" src="/static/js/contrib/jquery.form.js"></script>
-    <script type="text/javascript" src="/static/js/contrib/json2.js"></script>
+    <script type="text/javascript" src="/static/js/contrib/jquery.history.js"></script>
     <script type="text/javascript" src="/static/js/contrib/verge.js"></script>
     <script type="text/javascript" src="/static/js/site-code/pup.js"></script>
     <script type="text/javascript">
@@ -64,14 +69,16 @@
     <div id="output">
       <div id="padding">
       </div>
-      <div id="top">Welcome to Seapup's cosy home!<br/>
-        Type some stuff below if you feel like.
+      <div id="top">
+        <!-- TMPL_VAR body -->
         <br/><br/><br/>
       </div>
     </div>
     <div class="input">
-      <form class="input-form" autocomplete="off">
-        &gt; <input id="input-input" type="text">
+      <form class="input-form" autocomplete="off" method="post" action="<!-- TMPL_VAR input-url -->">
+        &gt; <input id="input-input" name="input" type="text" autofocus>
+        <input type="hidden" name="noscript" value="true" />
+        <input type="hidden" name="<!-- TMPL_VAR session-key -->" value="<!-- TMPL_VAR session-val -->" />
       </form> 
     </div>
   </body>

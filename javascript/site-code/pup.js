@@ -81,9 +81,11 @@ var pup =
                  return -1;
              } else {
                  terminal.pause();
-                 jrpc('/ajax', id, 'eliza', [input], 
+                 jrpc('/ajax', id, 'eliza', 
+                      [{input: input, session: session_id}],
                       function(json) {
                           if (!json.error) {
+                              session_id = json.result.session;
                               terminal.print(json); 
                           } else {
                               terminal.error(id, 'Oops.. got a json response error: ' + json.error.message);
@@ -96,7 +98,7 @@ var pup =
                                          ', Server reponse is: \n' +
                                          xhr.responseText);
                           terminal.resume();
-                      });    
+                      });
              };
              return id;
          };
@@ -137,6 +139,7 @@ var terminal =
          var $in_input;
          var $out;
          var rpc;
+         var History = window.History;
 
          var focus_on_input = function () {
              $in_input[0].focus();
@@ -151,16 +154,23 @@ var terminal =
              setup_plumbing();
              focus_on_input();
              scrollTo($("#top"));
-             
-             var msg = decode_hash(location.hash);
-             if(msg) {
-                 user_input(msg);
-             }
+             maybe_input_hash();
+         };
+
+         var maybe_input_hash = function () {
+             var hash = decode_hash(location.hash);
+             var input = get_parameter_by_name("input", location.search);
+             if(hash && !input) {
+                 user_input(hash);
+             }             
          };
 
          var setup_plumbing = function () {
              $in_input = $(":input", $in_form);
-             $in_form.ajaxForm(input_submit);
+             $in_form.on('submit', function(e) {
+                             e.preventDefault();
+                             input_submit();
+                         });
              $("#padding").height($.viewportH());
              setup_scrolling();
          };
@@ -169,12 +179,11 @@ var terminal =
              return document.body.scrollHeight - $(this).scrollTop() + 12
                  <= $(this).height() ? true : false;
          };
-
+         
          var get_others_all_down = function () {             
              return window.innerHeight + window.scrollY - 12 >= 
                  document.body.offsetHeight ? true : false;
          };
-
 
          var setup_scrolling = function () {
              window.onscroll =
@@ -216,7 +225,7 @@ var terminal =
          };
 
          var print_result = function (json) {
-             output_result(json.id, json.result);
+             output_result(json.id, json.result.output);
          };
 
          var output_result = function (id, string) {
@@ -228,18 +237,22 @@ var terminal =
 
          var make_term_url = function (msg) {
              var l = window.location;
-             return l.protocol + "//" + l.host + l.pathname + "#" + msg;  
+             return l.protocol + "//" + l.host + l.pathname + "#! " + msg;  
          };
 
          var term_click = function (e) {
-             // e.preventDefault();
-             var msg = decode_hash(e.target.hash);
+             e.preventDefault();
+             var msg = get_link_input(e);
              if(msg) {
-                 // put_hash_msg(msg);
                  user_input(msg);
+                 History.pushState(null, msg, "?input=" + msg);
              }
              focus_on_input();
-             return e;
+         };
+
+         var get_link_input = function (e) {
+             return get_parameter_by_name("input", e.target.search)
+                 || decode_hash(e.target.hash);
          };
 
          var massage_term_div = function ($div) {
@@ -271,10 +284,21 @@ var terminal =
              return decode_hash(window.location.hash);
          };
 
-         var decode_hash = function (msg) {
-             return decodeURIComponent(msg.slice(1));
+         var decode_hash = function (fragment) {
+             return get_parameter_by_name("input", fragment.slice(1));
          };
 
+         var get_parameter_by_name = function (name, href) {
+             var regex_string = "[\\?&]" + name + "=([^&#]*)";
+             var regex = new RegExp(regex_string);
+             var results = regex.exec(href);
+             if( results == null )
+                 return null;
+             else
+                 return decodeURIComponent(results[1].replace(/\+/g, " "));
+         };
+
+         // not used
          var put_hash_msg = function (msg) {
              window.location.replace("#" + encodeURIComponent(msg));
          };

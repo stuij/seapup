@@ -1,8 +1,5 @@
 (in-package :pup)
 
-(make-random-state)
-(cl-interpol:enable-interpol-syntax)
-
 (defun punctuation-p (char) (find char ".,;:!'*?#-()\\\""))
 
 (defun remove-punctuation (str)
@@ -64,7 +61,11 @@
         (error "Seapup config file doesn't exist. Please copy seapup/lisp/code/config-example.lisp into seapup/volatile/config/config.lisp and edit appropriately."))))
 
 (defun cmd-link (cmd label)
-  (site-link label (format nil "#~A" cmd) "termLink"))
+  (let* ((trail (format nil "?input=~A~{&session=~A~}"
+                        (url-encode cmd)
+                        (when (session-value 'set-session *session*)
+                          (list (session-cookie-value *session*))))))
+    (site-link label trail "termLink")))
 
 (defun site-link (label trail class)
   (format nil "<a class='~A' href='~A'>~A</a>"
@@ -96,9 +97,7 @@
               desc))))
 
 ;; make 3bmd handle pup-style wiki-like links
-(setf 3bmd-wiki:*wiki-links* t)
 (defclass pup-md () ())
-(setf 3bmd-wiki:*wiki-processor* (make-instance 'pup-md))
 
 (defmethod 3bmd-wiki::process-wiki-link ((p pup-md) nt ft args stream)
   (declare (ignorable p))

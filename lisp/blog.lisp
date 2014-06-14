@@ -298,6 +298,3 @@
 (defun get-posts-by-tag (tag)
   (declare (ignorable tag))
   (get-posts))
-
-;; an actual function call
-(reparse-content)
