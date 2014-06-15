@@ -156,6 +156,7 @@ var terminal =
              massage_term_div($("#top"));
              scrollTo($("#top"));
              maybe_input_hash();
+             // $("#padding").height(0);
          };
 
          var maybe_input_hash = function () {
@@ -246,7 +247,7 @@ var terminal =
              var msg = get_link_input(e);
              if(msg) {
                  user_input(msg);
-                 History.pushState(null, msg, "?input=" + msg);
+                 History.pushState(null, msg, "?input=" + encodeURIComponent(msg));
              }
              focus_on_input();
          };

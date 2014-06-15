@@ -77,7 +77,7 @@
 
 (defun eliza-grok (line session)
   "Respond to user input using pattern matching rules."
-  (let* ((input (line-to-eliza line))
+  (let* ((input (line-to-eliza (url-decode line)))
          (context (session-value 'context-tree session))
          (output (find-response input context)))
     (or output (get-catch-all line session))))
