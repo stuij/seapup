@@ -1,33 +1,61 @@
 soonish:
-- add make-comment link and machinery
-- decorate blogposts with the usual things like time
+- tags
+  - add 'hackery' and 'lisp' tags to fallenfrukt posts
+  - implement 'get-posts-by-tag'
+  - add tag decoration to blog post
+  - add hackery option to rss on both homepage and in rss.lisp
+  - make rss dispatching on tags/categories actually work
+  - default rss channel title and description for fallthrough tags.
+    specialized title and description for main/all and hackery tags.
 - decorate blog listings to be a bit more enticing
-- favicon
-- shape blog posts to be nice looking
-- blog post dissimination: rank by tag
-- history of input commands, triggerable with 'up' button
-- seapup sbcl-bin and add to upstart or whatever du-jour process manager
+  - list tags
+  - list all
+  - last posts
+  - blog years
+- blog years and amount of posts
+- resize images for small screens through css
+- blog summaries: let all be clickable, add date
+- retouch blog posts with our new features
+- add fallthrough blog-summary and date-published logic
 - when fall-through rules, offer random post/quote
+- add make-comment link and machinery
 - periodically refresh content-cache
 - add saving of conversations
-- support markdown text
-- subclass acceptor to use different certificates per domain on same host
-- add other categories besides blog posts
+  read the linked-to post
+- seapup sbcl-bin and add to upstart or whatever du-jour process manager
+- history of input commands, triggerable with 'up' button
 
 laterish:
+- grovel content dir images and resize for site versions
+- subclass acceptor to use different ssl certificates per domain on same host
+- parse rss/atom for catch-all generator - use cl-rss
+- add other categories besides blog posts
 - transfer image links plus jaded/frukt side-images to new blog if available
 - implement pausing of terminal, in awaitance of ajax content (not yet needed)
 - add conversation tree/standard yes/no, etc blocks
 - error handling of post parsing (atm this will often break)
-- in post objects, go from text-representation to proper localtime timestamp
 - put 'next' button under blog posts. Damn readable blog I have.
 - think of punctuation processing conundrum
 - add user-support
 - searching/indexing of text
-- rss support?
 - hunchentoot output feedback to repl when firing form web-page [later me: ?]
 
 done:
+v - maybe pre-init static page with content from url, so non-js-ssers can at least
+v - on new page-load, no static txt, but submit 'intro' post
+v - add 'without javascript will not work' text if no javascript available/allowed - no need
+v - take it away through javascript - no need
+v - make form submission work for input no JS
+v - implement google crawlable
+v - check how disable cookie affects sessions, and fix
+v - in post objects, go from text-representation to proper localtime timestamp
+v - support markdown text
+v - check if markdown will format pup/frukt posts nicely out of box
+v - decorate blogposts with the usual things like time
+v - put proper meta-data in html
+v - shape blog posts to be nice looking
+v - favicon
+v - rss support
 v - put eliza-rules.lisp in content and have something more generic
     for rule-sets (the idea being that seapup will explore some domain sometimes)
 v - downcase post request, cause that'd be a hassle
