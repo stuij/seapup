@@ -88,6 +88,9 @@ a {color: #6ca6cd; text-decoration: none;} /* deep sky blue 3 */
   font-size: 0.9em;
   }
 
+#top
+{ padding-top: 20px; }
+
 .img-txt
 { color: #696969;
   font-size: 0.9em;

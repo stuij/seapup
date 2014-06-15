@@ -108,6 +108,10 @@
         (format stream (img-link link ft))
         (format stream (cmd-link link ft)))))
 
+(defun md (txt)
+  (with-output-to-string (str)
+    (3bmd:parse-string-and-print-to-stream txt str)))
+
 #++ (with-output-to-string (s)
       (3bmd:parse-string-and-print-to-stream "[[bla bla|blog post]]" s))
 

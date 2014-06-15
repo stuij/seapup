@@ -67,8 +67,8 @@
 (defun context-init (session)
   (let ((base-context (make-instance 'pup-context
                                      :id 'base-context
-                                     :rules *base-rules*
-                                     :catch-all-hook *base-catch-all*)))
+                                     :rules (lambda () *base-rules*)
+                                     :catch-all-hook (lambda () *base-catch-all*))))
     (add-context 'base-context base-context session)))
 
 (defun reset-context (session)
@@ -80,12 +80,11 @@
   (let* ((input (line-to-eliza line))
          (context (session-value 'context-tree session))
          (output (find-response input context)))
-    (or output
-        (get-catch-all line session))))
+    (or output (get-catch-all line session))))
 
 (defun find-response (input context-tree)
   (loop for (key . context) in context-tree
-        do (let* ((rules (rules-of context))
+        do (let* ((rules (funcall (rules-of context)))
                   (output (use-eliza-rules input rules context)))
              (if output
                  (return output)))))
@@ -93,7 +92,7 @@
 (defun get-catch-all (input session)
   (let ((catch-alist (cdr (random-elt
                            (session-value 'context-catch-all session)))))
-    (funcall (car catch-alist) input (cdr catch-alist))))
+    (funcall (car catch-alist) input (funcall (cdr catch-alist)))))
 
 (defun load-contexts ()
   (cl-fad:walk-directory
@@ -102,7 +101,7 @@
      (load file))
    :test (lambda (file)
            (and (equal (pathname-type file)
-                  "lisp")
+                       "lisp")
                 (not (find #\# (namestring file)))))))
 
 (load-contexts)

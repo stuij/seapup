@@ -9,12 +9,12 @@
 (defun pup-init ()
   (make-random-state)
   (load-config)
-  (reparse-content)
   (cl-interpol:enable-interpol-syntax)
   (setf 3bmd-wiki:*wiki-links* t)
   (setf 3bmd-wiki:*wiki-processor* (make-instance 'pup-md))
   (setf cl-who:*downcase-tokens-p* nil)
-  (setf *rewrite-for-session-urls* nil))
+  (setf *rewrite-for-session-urls* nil)
+  (reparse-content))
 
 (defclass puppy-acceptor (easy-acceptor) ())
 (defmethod session-cookie-name ((acceptor puppy-acceptor))
@@ -120,7 +120,10 @@
                   :port *link-port*
                   :code +http-moved-permanently+)
         (let ((session (start-puppy-session (or (post-parameter "session")
-                                                (get-parameter "session")))))
+                                                (get-parameter "session"))))
+              (input (or (post-parameter "input")
+                         (get-parameter "input")
+                         "intro")))
           (with-output-to-string (*default-template-output*)
             (fill-and-print-template
              (cave "templates/main.tpl")
@@ -129,12 +132,9 @@
                :input-url "/"
                :session-key ,*puppy-session*
                :session-val ,(session-cookie-value session)
-               :body ,(get-body (or (post-parameter "input")
-                                    (get-parameter "input"))
-                                session))))))))
-
-(defun get-body (input session)
-  (eliza-grok (or input "intro") session))
+               :welcome ,(eliza-grok "quickly" session)
+               :input ,input
+               :output ,(eliza-grok input session))))))))
 
 (defun should-redirect ()
   (not

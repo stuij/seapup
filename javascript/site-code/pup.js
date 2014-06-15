@@ -55,7 +55,7 @@ var pup =
          };
 
          // var
-         var rpc_id=0;
+         var rpc_id=1;
 
          // fns
          var jrpc = function(url, id, method, params, success, error) {
@@ -153,6 +153,7 @@ var terminal =
 
              setup_plumbing();
              focus_on_input();
+             massage_term_div($("#top"));
              scrollTo($("#top"));
              maybe_input_hash();
          };

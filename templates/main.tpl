@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <!-- Yay you're reading the source :)
      The site is up on Github, for your viewing and forking pleasure: https://github.com/stuij/seapup -->
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <html>
   <head>
     <title>AwareWolf/Seapup</title>
@@ -62,22 +62,28 @@
     </script>
   </head> 
   <body>
-    <div class="background"></div>
-    <div class="scroll-down-maybe">
-      <div class="scroll-down-maybe-inner"></div>
-    </div>
+    <div class="background"></div>    
     <div id="output">
       <div id="padding">
       </div>
       <div id="top">
-        <!-- TMPL_VAR body -->
-        <br/><br/><br/>
+        <!-- TMPL_VAR welcome -->
+        <br/>
+        <div class="termSliver" id="termId0">
+          <div class=user>&gt; <span class="user-input"><!-- TMPL_VAR input --></span>
+          </div>
+          <div class=eliza>
+            <!-- TMPL_VAR output -->
+          </div>
+        </div>
       </div>
+    </div>
+    <div class="scroll-down-maybe">
+      <div class="scroll-down-maybe-inner"></div>
     </div>
     <div class="input">
       <form class="input-form" autocomplete="off" method="post" action="<!-- TMPL_VAR input-url -->">
         &gt; <input id="input-input" name="input" type="text" autofocus>
-        <input type="hidden" name="noscript" value="true" />
         <input type="hidden" name="<!-- TMPL_VAR session-key -->" value="<!-- TMPL_VAR session-val -->" />
       </form> 
     </div>

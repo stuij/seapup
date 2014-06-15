@@ -22,7 +22,7 @@
   (make-instance 'blog-post-context
                  :post post
                  :id id
-                 :rules *blog-post-rules*))
+                 :rules (lambda () *blog-post-rules*)))
 
 (defun add-blog-post-context (post session)
   (let ((id *blog-post-context-token*))
@@ -52,9 +52,7 @@
       (loop for line = (read-line stream nil)
             while line do (parse-content-line post line))
       (when (post-body post)
-        (let* ((body (with-output-to-string (out)
-                       (3bmd:parse-string-and-print-to-stream
-                        (post-body post) out)))
+        (let* ((body (md (post-body post)))
                (clean-body (string-trim '(#\Space #\Tab #\Newline)
                                         body)))
           (setf (post-body post) clean-body)))
