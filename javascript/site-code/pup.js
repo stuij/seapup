@@ -154,9 +154,9 @@ var terminal =
              setup_plumbing();
              focus_on_input();
              massage_term_div($("#top"));
+             // $("#padding").height(0);
              scrollTo($("#top"));
              maybe_input_hash();
-             // $("#padding").height(0);
          };
 
          var maybe_input_hash = function () {

@@ -77,7 +77,7 @@
 
 (defun eliza-grok (line session)
   "Respond to user input using pattern matching rules."
-  (let* ((input (line-to-eliza (url-decode line)))
+  (let* ((input (line-to-eliza (url-decode (url-encode line))))
          (context (session-value 'context-tree session))
          (output (find-response input context)))
     (or output (get-catch-all line session))))
@@ -92,7 +92,7 @@
 (defun get-catch-all (input session)
   (let ((catch-alist (cdr (random-elt
                            (session-value 'context-catch-all session)))))
-    (funcall (car catch-alist) input (funcall (cdr catch-alist)))))
+    (funcall (funcall (car catch-alist)) input (cdr catch-alist))))
 
 (defun load-contexts ()
   (cl-fad:walk-directory

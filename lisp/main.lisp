@@ -123,7 +123,7 @@
                                                 (get-parameter "session"))))
               (input (or (post-parameter "input")
                          (get-parameter "input")
-                         "intro")))
+                         "hiya")))
           (with-output-to-string (*default-template-output*)
             (fill-and-print-template
              (cave "templates/main.tpl")

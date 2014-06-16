@@ -121,3 +121,5 @@ hr:after
 .user-input { color: #ffa07a; /* light salmon */ }
 .comments { color: #696969; }
 .comment-head { display: inline }
+#welcome { padding-right: 50px;
+           float: right;}
