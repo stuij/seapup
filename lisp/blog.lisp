@@ -47,7 +47,10 @@
 ;; parse
 (defun parse-content (path)
   (with-open-file (stream path)
-    (let ((post (make-post)))
+    (let ((post (make-post :created nil :published nil :deleted nil
+                           :format nil :type nil :tags nil
+                           :title nil :author nil :summary nil
+                           :body nil :comments nil :path nil)))
       (setf (post-path post) path)
       (loop for line = (read-line stream nil)
             while line do (parse-content-line post line))
@@ -92,7 +95,7 @@
 
 (defun parse-deleted (post tail)
   (when (and tail (string-equal tail "1"))
-    (setf (post-deleted post) T)))
+    (setf (post-deleted post) t)))
 
 (defun parse-format (post tail)
   (when tail
@@ -135,15 +138,17 @@
                  (err "There already exists a post in the dir of " path)
                  (setf post (parse-content path))))
             ((string-equal (pathname-type path) "comment")
-             (push (parse-content path) comments))))
-    (if post
+             (let ((comment (parse-content path)))
+               (when (not (post-deleted comment))
+                   (push comment comments))))))
+    (if (and post (not (post-deleted post)))
         (progn
           (push post *blog-posts*)
           (when comments
             (setf (post-comments post)
                   (sort comments #'timestamp<
                         :key #'get-post-date))))
-        (when comments
+        (when (and comments (not post))
           (err "there were comments, but no blog-post in dir " dir)))))
 
 (defun reparse-content ()
@@ -205,10 +210,8 @@
 ;; years
 (defun make-year-list ()
   (loop for post in (get-posts)
-        do (let* ((y (timestamp-year (get-post-date post)))
-                  (deletedp (post-deleted post)))
-             (unless deletedp
-               (push-year-list y post)))))
+        do (let ((y (timestamp-year (get-post-date post))))
+             (push-year-list y post))))
 
 (defun push-year-list (key val)
   (let ((lst (assoc key *year-list*)))
