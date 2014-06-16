@@ -63,12 +63,12 @@
   </head> 
   <body>
     <div class="background"></div>    
+    <div id="padding">
+    </div>
     <div id="output">
-      <div id="padding">
-      </div>
       <div id="top">
-        <!-- TMPL_VAR welcome -->
-        <br/>
+        <div id="welcome"><!-- TMPL_VAR welcome --></div>
+        <br/><br/><br/>
         <div class="termSliver" id="termId0">
           <div class=user>&gt; <span class="user-input"><!-- TMPL_VAR input --></span>
           </div>
@@ -81,6 +81,7 @@
     <div class="scroll-down-maybe">
       <div class="scroll-down-maybe-inner"></div>
     </div>
+
     <div class="input">
       <form class="input-form" autocomplete="off" method="post" action="<!-- TMPL_VAR input-url -->">
         &gt; <input id="input-input" name="input" type="text" autofocus>
