@@ -52,7 +52,7 @@
       (loop for line = (read-line stream nil)
             while line do (parse-content-line post line))
       (when (post-body post)
-        (let* ((body (md (post-body post)))
+        (let* ((body (post-body post))
                (clean-body (string-trim '(#\Space #\Tab #\Newline)
                                         body)))
           (setf (post-body post) clean-body)))
@@ -76,6 +76,7 @@
                          ("title:" 'parse-title)
                          ("author:" 'parse-author)
                          ("tags:" 'parse-tags)
+                         ("summary:" 'parse-summary)
                          ("body:" 'parse-body-head))))
              (when item
                (let ((tail (when j (subseq line (+ j 1)))))
@@ -113,6 +114,10 @@
 (defun parse-title (post tail)
   (when tail
     (setf (post-title post) tail)))
+
+(defun parse-summary (post tail)
+  (when tail
+    (setf (post-summary post) tail)))
 
 (defun parse-body-head (post tail)
   (if tail
@@ -187,8 +192,9 @@
 
 (defun get-summary (post)
   (let* ((body (post-body post))
-         (sub (subseq body 0 (position #\newline body))))
-    (remove-paragraph sub)))
+         (summary (or (post-summary post)
+                      (subseq body 0 (position #\newline body)))))
+    (remove-paragraph (md summary))))
 
 (defun remove-paragraph (p)
   (register-groups-bind (middle)
@@ -221,7 +227,7 @@
   (bind-eliza-vars (%y) bindings
     (let ((year (parse-integer (print-with-spaces %y) :junk-allowed t)))
       (if year
-          (print-posts (cdr (assoc year *year-list*)))
+          (print-posts (reverse (cdr (assoc year *year-list*))))
           "Sorry, found no posts for that year.."))))
 
 
@@ -246,7 +252,7 @@
 ~A"
           (post-title post)
           (print-blog-date (post-created post))
-          (post-body post)
+          (md (post-body post))
           (print-comments post)))
 
 (defun print-blog-date (date)
@@ -263,10 +269,10 @@
 (defun print-single-comment (post)
   (format nil "
 <br/><div class='timestamp'>on ~A ~A said:</div>
-~A<br/>"
+~A<br/><br/>"
           (print-blog-date (post-created post))
           (post-author post)
-          (regex-replace "<p>" (post-body post) "<p class='comment-head'>")))
+          (regex-replace "<p>" (md (post-body post)) "<p class='comment-head'>")))
 
 (defun find-post (msg)
   (loop for post in (get-posts)
