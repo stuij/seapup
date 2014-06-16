@@ -12,6 +12,22 @@ body, html
 
 a {color: #6ca6cd; text-decoration: none;} /* deep sky blue 3 */
 
+hr
+{ height: 1px;
+  margin: 1em 1em 2em 0;
+  text-align: center;
+  border-color: #777;
+  border-width: 0;
+  border-style: dotted;
+
+  }
+
+hr:after
+{
+  content: "···";
+  letter-spacing: 2em;
+  }
+
 .scroll-down-maybe
 {
   z-index: -1;
