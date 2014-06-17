@@ -3,6 +3,7 @@
 (defparameter *blog-posts* '())
 (defparameter *year-list* '())
 (defparameter *blog-post-context-token* 'blog-post)
+(defparameter *tag-hash* (make-hash-table :test 'equal))
 
 ;; blog context
 (defparameter *blog-post-rules*
@@ -140,7 +141,7 @@
             ((string-equal (pathname-type path) "comment")
              (let ((comment (parse-content path)))
                (when (not (post-deleted comment))
-                   (push comment comments))))))
+                 (push comment comments))))))
     (if (and post (not (post-deleted post)))
         (progn
           (push post *blog-posts*)
@@ -158,31 +159,45 @@
         (sort *blog-posts* #'timestamp<
               :key #'get-post-date))
   (setf *year-list* '())
-  (make-year-list))
+  (make-year-list)
+  (make-tag-hash)
+  nil)
 
 
 ;; blogtacular
 ;; blog summary
-(defun blog (bindings)
-  (declare (ignorable bindings))
-  (let ((min-items (min (length (get-posts)) 5)))
+(defun blog ()
+  (let ((min-items (min (length (get-posts)) 3)))
     (if (> min-items 0)
-        (strcat "The latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
+        (format nil "
+You can browse the blog by ~A:</br>
+~A
+</br></br>
+Or by ~A:</br>
+~A
+</br></br></br>
+And these are the latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
 <br/>
 <br/>
+~A
 "
+                (cmd-link "blog tags" "tags")
+                (print-tags)
+                (cmd-link "blog years" "years")
+                (print-just-years)
                 (print-posts (subseq (reverse (get-posts)) 0 min-items)))
         "Got no blog posts for ya..")))
 
 (defun get-post-summary (post)
-  (let* ((tit-link (blog-link post))
+  (let* ((date (print-blog-date (post-created post)))
+         (tit-link (blog-link post))
          (summary (get-summary post))
          (no-comments (length (post-comments post))))
-    (format nil "
+    (format nil "<span class='timestamp'>~A</span>
 ~A
 ~A < ... >
 <span class='comments'>~R comment~:P</span><br/><br/><br/>"
-            tit-link summary no-comments)))
+            date tit-link summary no-comments)))
 
 (defun print-posts (posts)
   (let* ((out ""))
@@ -206,6 +221,41 @@
       ("<p>(.*)</p>" p)
     middle))
 
+;; tags
+(defun make-tag-hash ()
+  (let ((hash (make-hash-table :test 'equal)))
+    (loop for post in (get-posts)
+          do (add-to-tag-hash post hash))
+    (setf *tag-hash* hash)))
+
+(defun add-to-tag-hash (post hash)
+  (loop for tag in (post-tags post)
+        do (let* ((dtag (string-downcase (remove-punctuation tag)))
+                  (val (gethash dtag hash)))
+             (if val
+                 (push post (cdr val))
+                 (setf (gethash dtag hash)
+                       (cons tag (list post)))))))
+
+
+(defun print-tags ()
+  (let ((tags (loop for (tag . posts) being the hash-value in *tag-hash*
+                    unless (string-equal tag "ex-blog")
+                      collect (cmd-link (format nil "blog tag ~A" tag)
+                                        (format nil "~A_(~A)" tag (length posts))))))
+    (format nil "Blog tags (pick one): ~{<span class='some-spacing'>~A</span>~^ ~}" tags)))
+
+(defun get-posts-by-tag (tag)
+  (if (string-equal tag "all")
+      (get-posts)
+      (gethash (string-downcase (remove-punctuation tag)) *tag-hash*)))
+
+(defun print-blog-tag-posts (bindings)
+  (bind-eliza-vars (%y) bindings
+    (let ((posts (cdr (get-posts-by-tag (first %y)))))
+      (if posts
+          (print-posts posts)
+          "Sorry, found no posts for that tag.."))))
 
 ;; years
 (defun make-year-list ()
@@ -222,15 +272,15 @@
 (defun print-just-years ()
   (let ((years (loop for y in *year-list*
                      collect (cmd-link (format nil "blog year ~A" (car y))
-                                       (car y)))))
-    (format nil "Blog years (pick one):<br/><br/>
-~{~A~^<br/>~}" years)))
+                                       (format nil "~A_(~A)" (car y) (length (cdr y)))))))
+    (format nil "Blog years (pick one): ~{<span class='some-spacing'>~A</span>~^ ~}" years)))
 
 (defun print-blog-year-posts (bindings)
   (bind-eliza-vars (%y) bindings
-    (let ((year (parse-integer (print-with-spaces %y) :junk-allowed t)))
-      (if year
-          (print-posts (reverse (cdr (assoc year *year-list*))))
+    (let* ((year (parse-integer (print-with-spaces %y) :junk-allowed t))
+           (posts (reverse (cdr (assoc year *year-list*)))))
+      (if posts
+          (print-posts posts)
           "Sorry, found no posts for that year.."))))
 
 
@@ -302,6 +352,3 @@
       (post-published post)
       (post-created post)))
 
-(defun get-posts-by-tag (tag)
-  (declare (ignorable tag))
-  (get-posts))

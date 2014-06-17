@@ -123,3 +123,5 @@ hr:after
 .comment-head { display: inline }
 #welcome { padding-right: 50px;
            float: right;}
+
+.some-spacing { margin-left: 10px; }
