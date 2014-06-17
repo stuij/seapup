@@ -242,7 +242,7 @@ And these are the latest posts, as far as I can tell. Have fun I guess.. If they
   (let ((tags (loop for (tag . posts) being the hash-value in *tag-hash*
                     unless (string-equal tag "ex-blog")
                       collect (cmd-link (format nil "blog tag ~A" tag)
-                                        (format nil "~A_(~A)" tag (length posts))))))
+                                        (format nil "~A*(~A)" tag (length posts))))))
     (format nil "Blog tags (pick one): ~{<span class='some-spacing'>~A</span>~^ ~}" tags)))
 
 (defun get-posts-by-tag (tag)
@@ -272,7 +272,7 @@ And these are the latest posts, as far as I can tell. Have fun I guess.. If they
 (defun print-just-years ()
   (let ((years (loop for y in *year-list*
                      collect (cmd-link (format nil "blog year ~A" (car y))
-                                       (format nil "~A_(~A)" (car y) (length (cdr y)))))))
+                                       (format nil "~A*(~A)" (car y) (length (cdr y)))))))
     (format nil "Blog years (pick one): ~{<span class='some-spacing'>~A</span>~^ ~}" years)))
 
 (defun print-blog-year-posts (bindings)
