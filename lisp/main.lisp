@@ -111,30 +111,30 @@
 (defun handle-main ()
   (let ((*string-modifier* #'identity)
         (locales (get-locales)))
-    (if (should-redirect)
-        (redirect (request-uri*)
-                  :protocol (if (equal *link-protocol* "https")
-                                :https
-                                :http)
-                  :host *link-host*
-                  :port *link-port*
-                  :code +http-moved-permanently+)
-        (let ((session (start-puppy-session (or (post-parameter "session")
-                                                (get-parameter "session"))))
-              (input (or (post-parameter "input")
-                         (get-parameter "input")
-                         "hiya")))
-          (with-output-to-string (*default-template-output*)
-            (fill-and-print-template
-             (cave "templates/main.tpl")
-             `(:accept-i18ns ,locales
-               :debug ,(json:encode-json-to-string *debug-js*)
-               :input-url "/"
-               :session-key ,*puppy-session*
-               :session-val ,(session-cookie-value session)
-               :welcome ,(eliza-grok "quickly" session)
-               :input ,input
-               :output ,(eliza-grok input session))))))))
+    ;;(should-redirect)
+    #++(redirect (request-uri*)
+                 :protocol (if (equal *link-protocol* "https")
+                               :https
+                               :http)
+                 :host *link-host*
+                 :port *link-port*
+                 :code +http-moved-permanently+)
+    (let ((session (start-puppy-session (or (post-parameter "session")
+                                            (get-parameter "session"))))
+          (input (or (post-parameter "input")
+                     (get-parameter "input")
+                     "hiya")))
+      (with-output-to-string (*default-template-output*)
+        (fill-and-print-template
+         (cave "templates/main.tpl")
+         `(:accept-i18ns ,locales
+           :debug ,(json:encode-json-to-string *debug-js*)
+           :input-url "/"
+           :session-key ,*puppy-session*
+           :session-val ,(session-cookie-value session)
+           :welcome ,(eliza-grok "quickly" session)
+           :input ,input
+           :output ,(eliza-grok input session)))))))
 
 (defun should-redirect ()
   (not
