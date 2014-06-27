@@ -85,7 +85,6 @@
     <div class="input">
       <form class="input-form" autocomplete="off" method="post" action="<!-- TMPL_VAR input-url -->">
         &gt; <input id="input-input" name="input" type="text" autofocus>
-        <input type="hidden" name="<!-- TMPL_VAR session-key -->" value="<!-- TMPL_VAR session-val -->" />
       </form> 
     </div>
   </body>

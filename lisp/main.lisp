@@ -119,8 +119,7 @@
                  :host *link-host*
                  :port *link-port*
                  :code +http-moved-permanently+)
-    (let ((session (start-puppy-session (or (post-parameter "session")
-                                            (get-parameter "session"))))
+    (let ((session (start-puppy-session (post-parameter "session")))
           (input (or (post-parameter "input")
                      (get-parameter "input")
                      "hiya")))
@@ -129,9 +128,8 @@
          (cave "templates/main.tpl")
          `(:accept-i18ns ,locales
            :debug ,(json:encode-json-to-string *debug-js*)
-           :input-url "/"
-           :session-key ,*puppy-session*
-           :session-val ,(session-cookie-value session)
+           :input-url ,(format nil "/?~A=~A" *puppy-session*
+                               (session-cookie-value session))
            :welcome ,(eliza-grok "quickly" session)
            :input ,input
            :output ,(eliza-grok input session)))))))
@@ -159,20 +157,21 @@
     `((,*puppy-session* . ,(session-cookie-value session))
       (output . ,result))))
 
-(defun start-puppy-session (session-id)
-  (when (and session-id
+(defun start-puppy-session (post-session-id)
+  (when (and post-session-id
              (not (session *request*)))
     (with-slots (get-parameters session)
         *request*
-      (push `(,*puppy-session* . ,session-id) get-parameters)
+      (push `(,*puppy-session* . ,post-session-id) get-parameters)
       (setf session (hunchentoot::session-verify *request*))))
   (let* ((session (start-session))
          (session-cookie (cookie-in (session-cookie-name
                                      *acceptor*) *request*)))
     (unless (session-value 'context-tree session)
       (context-init session))
-    (unless session-cookie
-      (setf (session-value 'set-session) t))
+    (if (or post-session-id session-cookie)
+        (setf (session-value 'set-session) nil)
+        (setf (session-value 'set-session) t))
     (when *debug*
       (setf *last-session* session)
       (setf *last-request* *request*))
