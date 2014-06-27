@@ -291,8 +291,9 @@ And these are the latest posts, as far as I can tell. Have fun I guess.. If they
 
 (defun print-post (post context)
   (if post
-      (progn
-        (add-blog-post-context post (session-of context))
+      (let ((session (session-of context)))
+        (when (not (session-value 'crawler session))
+          (add-blog-post-context post session))
         (print-post-proper post))
       "Sorry, couldn't find your post."))
 

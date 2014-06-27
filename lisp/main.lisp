@@ -5,6 +5,38 @@
 (defparameter *last-ssl-acceptor* nil)
 (defparameter *last-session* nil)
 (defparameter *last-request* nil)
+(defparameter *bot-scanner* (create-scanner "google|msnbot|wget|curl|baiduspider|bingbot|rambler|yahoo|AbachoBOT|accoona|AcioRobot|ASPSeek|Dumbot|GeonaBot|Gigabot|Lycos|MSRBOT|Scooter|AltaVista|IDBot|eStyle|Scrubby|ia_archiver|Sogou web spider|Twitterbot"
+                                            :case-insensitive-mode t))
+
+(defparameter *dummy-session* nil)
+
+(defun make-dummy-session ()
+  (let ((session (make-instance 'no-state-session)))
+    (with-slots (hunchentoot::session-data) session
+        (setf hunchentoot::session-data
+              (make-no-state-session-data session)))
+    session))
+
+(defclass no-state-session (session)
+  ((hunchentoot::session-id     :initform "0:000000")
+   (hunchentoot::session-string :initform "session")
+   (hunchentoot::user-agent     :initform "dummy")
+   (hunchentoot::remote-addr    :initform "0.0.0.0")
+   (hunchentoot::session-start  :initform "0")
+   (hunchentoot::last-click     :initform "0")
+   (hunchentoot::session-data)))
+
+(defun make-no-state-session-data (session)
+  (let ((base-context (make-base-context)))
+    (setf (session-of base-context) session)
+    (list (cons 'set-session  nil)
+          (cons 'context-tree
+                (list (cons 'base-context base-context)))
+          (cons 'context-catch-all
+                (list (cons 'base-context
+                            (cons (catch-all-hook-of base-context)
+                                  base-context))))
+          (cons 'crawler t))))
 
 (defun pup-init ()
   (make-random-state)
@@ -14,7 +46,8 @@
   (setf 3bmd-wiki:*wiki-processor* (make-instance 'pup-md))
   (setf cl-who:*downcase-tokens-p* nil)
   (setf *rewrite-for-session-urls* nil)
-  (reparse-content))
+  (reparse-content)
+  (setf *dummy-session* (make-dummy-session)))
 
 (defclass puppy-acceptor (easy-acceptor) ())
 (defmethod session-cookie-name ((acceptor puppy-acceptor))
@@ -134,6 +167,9 @@
            :input ,input
            :output ,(eliza-grok input session)))))))
 
+(defun botp (&optional (request *request*))
+  (scan *bot-scanner* (user-agent request)))
+
 (defun should-redirect ()
   (not
    (and (string-equal (first (split-sequence #\: (host)))
@@ -158,6 +194,11 @@
       (output . ,result))))
 
 (defun start-puppy-session (post-session-id)
+  (when (botp)
+    (when *debug*
+      (setf *last-session* *dummy-session*)
+      (setf *last-request* *request*))
+    (return-from start-puppy-session *dummy-session*))
   (when (and post-session-id
              (not (session *request*)))
     (with-slots (get-parameters session)

@@ -63,8 +63,8 @@
 (defun cmd-link (cmd label)
   (let* ((trail (format nil "?input=~A~{&session=~A~}"
                         (escape-for-html (url-encode cmd)) 
-                        (when (and (boundp '*session*)
-                                   (session-value 'set-session *session*))
+                        (when (and (boundp 'hunchentoot:*session*)
+                                   (session-value 'set-session))
                           (list (session-cookie-value *session*))))))
     (site-link label trail "termLink")))
 
