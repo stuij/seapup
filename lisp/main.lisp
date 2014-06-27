@@ -13,8 +13,8 @@
 (defun make-dummy-session ()
   (let ((session (make-instance 'no-state-session)))
     (with-slots (hunchentoot::session-data) session
-        (setf hunchentoot::session-data
-              (make-no-state-session-data session)))
+      (setf hunchentoot::session-data
+            (make-no-state-session-data session)))
     session))
 
 (defclass no-state-session (session)
@@ -46,6 +46,7 @@
   (setf 3bmd-wiki:*wiki-processor* (make-instance 'pup-md))
   (setf cl-who:*downcase-tokens-p* nil)
   (setf *rewrite-for-session-urls* nil)
+  (setf *session-max-time* (* 60 60 4))
   (reparse-content)
   (setf *dummy-session* (make-dummy-session)))
 
