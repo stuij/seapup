@@ -29,7 +29,7 @@
     (load quicklisp-init)))
 
 (require 'swank)
-(swank:create-server :style :spawn :dont-close t)
+(swank:create-server :dont-close t)
 (ql:quickload "pup")
 (pup:start-server)
 (bt:join-thread (hunchentoot::acceptor-process
