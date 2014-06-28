@@ -109,6 +109,10 @@
         (format stream (img-link link ft))
         (format stream (cmd-link link ft)))))
 
+(defun get-input ()
+  (or (post-parameter "input")
+      (get-parameter "input")))
+
 (defun md (txt)
   (with-output-to-string (str)
     (3bmd:parse-string-and-print-to-stream txt str)))

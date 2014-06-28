@@ -154,8 +154,7 @@
                  :port *link-port*
                  :code +http-moved-permanently+)
     (let ((session (start-puppy-session (post-parameter "session")))
-          (input (or (post-parameter "input")
-                     (get-parameter "input")
+          (input (or (get-input)
                      "hiya")))
       (with-output-to-string (*default-template-output*)
         (fill-and-print-template
@@ -164,7 +163,7 @@
            :debug ,(json:encode-json-to-string *debug-js*)
            :input-url ,(format nil "/?~A=~A" *puppy-session*
                                (session-cookie-value session))
-           :welcome ,(eliza-grok "quickly" session)
+           :welcome ,(md "Confused? Type [[help|help]].")
            :input ,input
            :output ,(eliza-grok input session)))))))
 

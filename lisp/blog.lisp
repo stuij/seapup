@@ -3,6 +3,8 @@
 (defparameter *blog-posts* '())
 (defparameter *year-list* '())
 (defparameter *blog-post-context-token* 'blog-post)
+(defparameter *blog-comment-context-token* 'blog-comment)
+(defparameter *comment-sign-context-token* 'comment-sign)
 (defparameter *tag-hash* (make-hash-table :test 'equal))
 
 ;; blog context
@@ -30,6 +32,104 @@
     (remove-context id session)
     (add-context id (make-blog-post-context post id) session)))
 
+(defclass blog-comment-context (blog-post-context)
+  ((comment :initarg :comment :accessor comment-of)))
+
+(defun make-blog-comment-context (post id)
+  (make-instance 'blog-comment-context
+                 :post post
+                 :comment (make-blog-post)
+                 :id id
+                 :rules (lambda () *blog-comment-rules*)))
+
+
+(defun add-blog-comment-context (post session)
+  (let ((id *blog-comment-context-token*))
+    (remove-context id session)
+    (add-context id (make-blog-comment-context post id) session)))
+
+(defclass comment-sign-context (blog-comment-context)
+  ())
+
+(defun make-comment-sign-context (post comment id)
+  (make-instance 'blog-comment-context
+                 :post post
+                 :comment comment
+                 :id id
+                 :rules (lambda () *comment-sign-rules*)))
+
+(defun add-comment-sign-context (post comment session)
+  (let ((id *comment-sign-context-token*))
+    (remove-context id session)
+    (add-context id (make-comment-sign-context post comment id) session)))
+
+(defun start-comment (context)
+  (let ((comment-context (add-blog-comment-context (post-of context)
+                                                   (session-of context))))
+    (comment-first comment-context)))
+
+(defun comment-done (context)
+  (let ((sign-context (add-comment-sign-context (post-of context)
+                                                (comment-of context)
+                                                (session-of context))))
+    (comment-sign-start)))
+
+(defun comment-sign-start ()
+  (md "Write your name, or something like it, and I'll save your comment; unless you write [[quit|quit]] or [[redo|redo]]. Again they do what you think."))
+
+(defun comment-sign-done (context)
+  (let ((session (session-of context)))
+    (remove-context *comment-sign-context-token* session)
+    (remove-context *blog-comment-context-token* session))
+  "Yay, comment (dummy) written")
+
+(defun comment-quit (context)
+  (remove-context *blog-comment-context-token* (session-of context))
+  "Well, I guess that was that. No more commenting. You want a cup of tea?")
+
+(defun comment-sign-quit (context)
+  (remove-context *comment-sign-context-token* (session-of context))
+  (comment-quit context))
+
+(defun comment-first (context)
+  (format nil "So you wanna make a comment on blog post '~A'? Ok, cool :)
+
+~A"
+          (post-title (post-of context))
+          (show-comment-body (post-body (comment-of context)))))
+
+(defun comment-more (context)
+  (let* ((old-body (or (post-body (comment-of context)) ""))
+         (new-body (if (get-input)
+                       (format nil "~A<br/>
+~A"
+                               old-body
+                               (get-input))
+                       old-body)))
+    (setf (post-body (comment-of context)) new-body)
+    (show-comment-body new-body)))
+
+(defun comment-redo (context)
+  (setf (post-body (comment-of context)) "")
+  (format nil "Ok, we're all clean as a baby's bottom again. Let's try once more.
+
+~A"
+          (show-comment-body nil)))
+
+(defun comment-sign-redo (context)
+  (remove-context *comment-sign-context-token* (session-of context))
+  (comment-redo context))
+
+(defun show-comment-body (body)
+  (format nil (md "Type what you want to type, and press enter. Keep on typing and pressing enter if you have more to say. You can use [markdown](http://daringfireball.net/projects/markdown/) or HTML to make it all look pretty.
+
+When you're happy, or perhaps not so happy, type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to do what you think they do.
+
+So far, This is what we have:
+ 
+'~A'")
+          (or body "[nothing yet]")))
+
 ;; post
 (defstruct post
   created
@@ -40,18 +140,22 @@
   tags
   title
   author
+  email
   summary
   body
   comments
   path)
 
 ;; parse
+(defun make-blog-post ()
+  (make-post :created nil :published nil :deleted nil
+             :format nil :type nil :tags nil
+             :title nil :author nil :summary nil
+             :body nil :comments nil :path nil))
+
 (defun parse-content (path)
   (with-open-file (stream path)
-    (let ((post (make-post :created nil :published nil :deleted nil
-                           :format nil :type nil :tags nil
-                           :title nil :author nil :summary nil
-                           :body nil :comments nil :path nil)))
+    (let ((post (make-blog-post)))
       (setf (post-path post) path)
       (loop for line = (read-line stream nil)
             while line do (parse-content-line post line))

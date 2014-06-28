@@ -30,7 +30,8 @@
   (setf (session-of context) session)
   (push `(,key  . ,context) (session-value 'context-tree session))
   (when (catch-all-hook-of context)
-    (add-catch-all key (catch-all-hook-of context) context session)))
+    (add-catch-all key (catch-all-hook-of context) context session))
+  context)
 
 (defun remove-context (key session)
   (when (find-catch-all key session)
@@ -65,11 +66,14 @@
 
 ;; machinations
 (defun context-init (session)
-  (let ((base-context (make-instance 'pup-context
-                                     :id 'base-context
-                                     :rules (lambda () *base-rules*)
-                                     :catch-all-hook (lambda () *base-catch-all*))))
+  (let ((base-context (make-base-context)))
     (add-context 'base-context base-context session)))
+
+(defun make-base-context ()
+  (make-instance 'pup-context
+                 :id 'base-context
+                 :rules (lambda () *base-rules*)
+                 :catch-all-hook (lambda () *base-catch-all*)))
 
 (defun reset-context (session)
   (clear-context session)
