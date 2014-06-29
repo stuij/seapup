@@ -188,10 +188,15 @@
   (eliza-fun data))
 
 (defun eliza-fun (data)
-  (let* ((session (start-puppy-session (cdr (assoc :session data))))
-         (result (eliza-grok (cdr (assoc :input data)) session)))
-    `((,*puppy-session* . ,(session-cookie-value session))
-      (output . ,result))))
+  (let ((input (cdr (assoc :input data))))
+    ;; bit of a dirty hack here, but it's so silly to not use a perfectly
+    ;; sane mechanism. Sign this one up to HTML's wonky mix of communication means
+    (with-slots (get-parameters post-parameters) *request*
+      (push `("input" . ,input) get-parameters))
+    (let* ((session (start-puppy-session (cdr (assoc :session data))))
+           (result (eliza-grok input session)))
+      `((,*puppy-session* . ,(session-cookie-value session))
+        (output . ,result)))))
 
 (defun start-puppy-session (post-session-id)
   (when (botp)
