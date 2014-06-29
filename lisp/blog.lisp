@@ -1,7 +1,9 @@
 (in-package :pup)
 
 (defparameter *blog-posts* '())
+(defvar *tmp-blog-posts*)
 (defparameter *year-list* '())
+(defvar *tmp-year-list*)
 (defparameter *blog-post-context-token* 'blog-post)
 (defparameter *blog-comment-context-token* 'blog-comment)
 (defparameter *comment-sign-context-token* 'comment-sign)
@@ -69,19 +71,37 @@
     (comment-first comment-context)))
 
 (defun comment-done (context)
-  (let ((sign-context (add-comment-sign-context (post-of context)
-                                                (comment-of context)
-                                                (session-of context))))
-    (comment-sign-start)))
+  (add-comment-sign-context (post-of context)
+                            (comment-of context)
+                            (session-of context))
+  (comment-sign-start))
 
 (defun comment-sign-start ()
   (md "Write your name, or something like it, and I'll save your comment; unless you write [[quit|quit]] or [[redo|redo]]. Again they do what you think."))
 
 (defun comment-sign-done (context)
-  (let ((session (session-of context)))
+  (let* ((session (session-of context))
+         (post (post-of context))
+         (post-path (post-path post))
+         (post-dir (directory-namestring post-path))
+         (post-name (post-title post))
+         (name (get-input))
+         (comment-name (format nil "~A - ~A"
+                               post-name name))
+         (comment (comment-of context)))
+    (setf (post-author comment) name)
+    (setf (post-deleted comment) 0)
+    (setf (post-format comment) "markdown")
+    (setf (post-created comment) (now))
+    (write-single-comment comment post-dir comment-name)
     (remove-context *comment-sign-context-token* session)
-    (remove-context *blog-comment-context-token* session))
-  "Yay, comment (dummy) written")
+    (remove-context *blog-comment-context-token* session)
+    (reparse-content)
+    (format nil "Yay, comment written :)<br/>
+Here's the post again plus your comment:<br/>
+<br/>
+~A"
+            (eliza-grok (strcat "blog post " (post-title post)) *session*))))
 
 (defun comment-quit (context)
   (remove-context *blog-comment-context-token* (session-of context))
@@ -123,7 +143,7 @@
 (defun show-comment-body (body)
   (format nil (md "Type what you want to type, and press enter. Keep on typing and pressing enter if you have more to say. You can use [markdown](http://daringfireball.net/projects/markdown/) or HTML to make it all look pretty.
 
-When you're happy, or perhaps not so happy, type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to do what you think they do.
+Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to do what you think they do.
 
 So far, This is what we have:
  
@@ -248,7 +268,7 @@ So far, This is what we have:
                  (push comment comments))))))
     (if (and post (not (post-deleted post)))
         (progn
-          (push post *blog-posts*)
+          (push post *tmp-blog-posts*)
           (when comments
             (setf (post-comments post)
                   (sort comments #'timestamp<
@@ -256,14 +276,20 @@ So far, This is what we have:
         (when (and comments (not post))
           (err "there were comments, but no blog-post in dir " dir)))))
 
+(defun reparse-blog ()
+  (let ((*tmp-blog-posts* '()))
+    (walk-blog-dirs (cave "content/text/blog"))
+    (setf *blog-posts* (sort *tmp-blog-posts* #'timestamp<
+                             :key #'get-post-date))))
+
+(defun reparse-year-list ()
+  (let ((*tmp-year-list* '()))
+    (make-year-list)
+    (setf *year-list* *tmp-year-list*)))
+
 (defun reparse-content ()
-  (setf *blog-posts* '())
-  (walk-blog-dirs (cave "content/text/blog"))
-  (setf *blog-posts*
-        (sort *blog-posts* #'timestamp<
-              :key #'get-post-date))
-  (setf *year-list* '())
-  (make-year-list)
+  (reparse-blog)
+  (reparse-year-list)
   (make-tag-hash)
   nil)
 
@@ -368,10 +394,10 @@ And these are the latest posts, as far as I can tell. Have fun I guess.. If they
              (push-year-list y post))))
 
 (defun push-year-list (key val)
-  (let ((lst (assoc key *year-list*)))
+  (let ((lst (assoc key *tmp-year-list*)))
     (if lst
-        (setf (cdr (assoc key *year-list*)) (append (cdr lst) (list val)))
-        (setf *year-list* (acons key (list val) *year-list*)))))
+        (setf (cdr (assoc key *tmp-year-list*)) (append (cdr lst) (list val)))
+        (setf *tmp-year-list* (acons key (list val) *tmp-year-list*)))))
 
 (defun print-just-years ()
   (let ((years (loop for y in *year-list*
@@ -449,6 +475,14 @@ And these are the latest posts, as far as I can tell. Have fun I guess.. If they
     :short-month #\space (:year 4) #\space
     (:hour 2) #\: (:min 2) #\: (:sec 2)))
 
+(defparameter +post-identifier-format+
+  '((:year 4) "-" (:month 2) "-" (:day 2) #\space
+    (:hour 2) #\: (:min 2) #\: (:sec 2) "." :nsec))
+
+(defparameter +parsable-timestring-format+
+  '((:year 4) "-" (:month 2) "-" (:day 2) #\space
+    (:hour 2) #\: (:min 2) #\: (:sec 2)))
+
 (defun get-posts ()
   *blog-posts*)
 
@@ -457,3 +491,84 @@ And these are the latest posts, as far as I can tell. Have fun I guess.. If they
       (post-published post)
       (post-created post)))
 
+;; write posts
+(defun write-posts (output-root-path post-list)
+  (loop for post in post-list
+        do (write-single-post post output-root-path)))
+
+(defun write-single-post (post root)
+  (multiple-value-bind (post-dir post-file-prefix name)
+      (get-post-dir post root)
+    (ensure-directories-exist post-dir)
+    (write-post-proper post (strcat post-file-prefix ".post"))
+    (write-comments post post-dir name)))
+
+(defun write-comments (post post-dir name)
+  (loop for c in (post-comments post)
+        do (write-single-comment c post-dir name)))
+
+(defun write-single-comment (post post-dir name)
+  (let* ((date (format-timestring nil (post-created post)
+                                  :format +post-identifier-format+))
+         (post-file (strcat (namestring post-dir) date
+                            " - " name ".comment")))
+    (with-open-file (s post-file
+                       :direction :output
+                       :if-does-not-exist :create
+                       :if-exists :supersede)
+      (format s "~
+- author: ~A
+- created: ~A
+- format: ~A
+- deleted: ~A
+- type: ~A
+- email: ~A
+- body:
+~A"
+              (post-author post)
+              (format-timestring nil (get-post-created post)
+                                 :format +parsable-timestring-format+)
+              (post-format post)
+              (post-deleted post)
+              "blog-comment"
+              (or (post-email post) "")
+              (post-body post)))))
+
+(defun get-post-created (post)
+  (post-created post))
+
+(defun write-post-proper (post post-file)
+  (with-open-file (s post-file
+                     :direction :output
+                     :if-does-not-exist :create
+                     :if-exists :supersede)
+    (format s "~
+- created: ~A
+- format: ~A
+- deleted: ~A
+- type: ~A
+- title: ~A
+- tags:~{ ~A~}
+- body:
+~A"
+            (post-created post)
+            (post-type post)
+            (post-deleted post)
+            "blog-post"
+            (post-title post)
+            (get-post-tags post)
+            (post-body post))))
+
+(defun get-post-tags (post)
+  (post-tags post))
+
+(defun get-post-dir (post root)
+  (let* ((root* (concatenate 'string root "/"))
+         (root-path (make-pathname :directory (pathname-directory root*)))
+         (title-sanitized (regex-replace-all #\? (post-title post) ""))
+         (post-date (post-created post))
+         (post-name (concatenate 'string post-date " - " title-sanitized))
+         (post-dir (merge-pathnames (concatenate 'string post-name "/") root-path))
+         (post-file-prefix (namestring (merge-pathnames post-name post-dir))))
+    (assert (probe-file root-path) nil "root path ~A doesn't exist" root-path)
+    (values post-dir post-file-prefix title-sanitized)))
