@@ -119,18 +119,20 @@ Here's the post again plus your comment:<br/>
           (show-comment-body (post-body (comment-of context)))))
 
 (defun comment-more (context)
-  (let* ((old-body (or (post-body (comment-of context)) ""))
-         (new-body (if (get-input)
-                       (format nil "~A<br/>
-~A"
-                               old-body
-                               (get-input))
+  (let* ((input (get-input))
+         (old-body (post-body (comment-of context)))
+         (new-body (if (and input (not (equal input "")))
+                       (string-trim '(#\Space #\Tab #\Newline)
+                                    (format nil "~A~%~%~A"
+                                            (or old-body "")
+                                            (get-input)))
                        old-body)))
-    (setf (post-body (comment-of context)) new-body)
+    (when new-body
+      (setf (post-body (comment-of context)) new-body))
     (show-comment-body new-body)))
 
 (defun comment-redo (context)
-  (setf (post-body (comment-of context)) "")
+  (setf (post-body (comment-of context)) nil)
   (format nil "Ok, we're all clean as a baby's bottom again. Let's try once more.
 
 ~A"
@@ -141,14 +143,14 @@ Here's the post again plus your comment:<br/>
   (comment-redo context))
 
 (defun show-comment-body (body)
-  (format nil (md "Type what you want to type, and press enter. Keep on typing and pressing enter if you have more to say. You can use [markdown](http://daringfireball.net/projects/markdown/) or HTML to make it all look pretty.
-
-Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to do what you think they do.
+  (md (format nil "Type what you want to type, and press enter. Keep on typing and pressing enter if you have more to say. You can use [markdown](http://daringfireball.net/projects/markdown/) or HTML to make it all look pretty.
 
 So far, This is what we have:
  
-'~A'")
-          (or body "[nothing yet]")))
+'~A'
+
+Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to do what you think they do."
+              (or body "[nothing yet]"))))
 
 ;; post
 (defstruct post
