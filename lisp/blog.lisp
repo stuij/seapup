@@ -314,7 +314,7 @@ And these are the latest posts, as far as I can tell. Have fun I guess.. If they
 ~A
 "
                 (cmd-link "blog tags" "tags")
-                (print-tags)
+                (print-all-tags)
                 (cmd-link "blog years" "years")
                 (print-just-years)
                 (print-posts (subseq (reverse (get-posts)) 0 min-items)))
@@ -370,7 +370,7 @@ And these are the latest posts, as far as I can tell. Have fun I guess.. If they
                        (cons tag (list post)))))))
 
 
-(defun print-tags ()
+(defun print-all-tags ()
   (let ((tags (loop for (tag . posts) being the hash-value in *tag-hash*
                     unless (string-equal tag "ex-blog")
                       collect (cmd-link (format nil "blog tag ~A" tag)
@@ -432,14 +432,18 @@ And these are the latest posts, as far as I can tell. Have fun I guess.. If they
 (defun print-post-proper (post)
   (format nil "
 <br/>
-<div class='title'>~A</div>
-<div class='timestamp'>~A</div>
+<div class='title'>~A</div> <div class='timestamp'>~A</div>
+~A
 ~A<br/>
 ~A"
           (post-title post)
+          (print-tags post)
           (print-blog-date (post-created post))
           (md (post-body post))
           (print-comments post)))
+
+(defun print-tags (post)
+  (md (format nil "tags: ~{[[~A|blog tag ~:*~A]]~^ ~}" (post-tags post))))
 
 (defun print-blog-date (date)
   (format-timestring nil date :format +puppy-date-format+))
