@@ -304,13 +304,12 @@ Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to d
         (format nil "
 You can browse the blog by ~A:</br>
 ~A
-</br></br>
-Or by ~A:</br>
+</br>
+Or browse by ~A:</br>
 ~A
-</br></br></br>
+</br></br></br><br/>
 And these are the latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
-<br/>
-<br/>
+<br/><br/>
 ~A
 "
                 (cmd-link "blog tags" "tags")
@@ -372,10 +371,19 @@ And these are the latest posts, as far as I can tell. Have fun I guess.. If they
 
 (defun print-all-tags ()
   (let ((tags (loop for (tag . posts) being the hash-value in *tag-hash*
-                    unless (string-equal tag "ex-blog")
-                      collect (cmd-link (format nil "blog tag ~A" tag)
-                                        (format nil "~A*(~A)" tag (length posts))))))
-    (format nil "Blog tags (pick one): ~{<span class='some-spacing'>~A</span>~^ ~}" tags)))
+                    unless (or (string-equal tag "fallen-frukt")
+                               (string-equal tag "jaded-puppy")
+                               (string-equal tag "tales-from-the-underbelly"))
+                        collect (cmd-link (format nil "blog tag ~A" tag)
+                                          (format nil "~A(~A)" tag (length posts))))))
+    (md (format nil "Ex-blogs from other places revamped here for your pleasure:
+
+- [[jaded-puppy|jaded-puppy]] - 2005-2007 - Jaded puppy's adventures in Sweden
+- [[fallen-frukt|blog tag fallen-frukt]] - 2005-2008 - Common Lisp programming
+- [[tales-from-the-underbelly|tales-from-the-underbelly]] - 2008-2011 - One Laptop Per Child/Nepal stuff, and some travelly/culturally things from other places.
+
+and the rest:
+ ~{<span class='some-spacing'>~A</span>~^ ~}" tags))))
 
 (defun get-posts-by-tag (tag)
   (if (string-equal tag "all")
