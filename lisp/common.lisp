@@ -97,7 +97,52 @@
               (site-link img img-trail-orig "img-link")
               desc))))
 
-;; make 3bmd handle pup-style wiki-like links
+
+(defun get-input ()
+  (or (post-parameter "input")
+      (get-parameter "input")))
+
+
+;; parsing and replacing output strings
+
+;; Markdown for all markup but links.
+;; It's a bit calculation-intensive, so we try to do as much
+;; as possible as early as possible
+(defun md (txt)
+  (with-output-to-string (str)
+    (3bmd:parse-string-and-print-to-stream txt str)))
+
+(defmacro md-pre (txt)
+  "Since this Markdown is so expensive, just pre-render common format strings
+   at compile-time."
+  (with-output-to-string (str)
+    (3bmd:parse-string-and-print-to-stream txt str)))
+
+;; regex replacing for links. Costs little time, and we can't
+;; predict in advance if we for example need to add session strings.
+(defun lrep (str)
+  "replace wiki links"
+  (regex-replace-all "\\[\\[([^|]*)\\|([^\\]]*)\\]\\]" str
+                     #'(lambda (match &rest regs)
+                         (declare (ignorable match))
+                         (let ((label (first regs))
+                               (link  (second regs))
+                               (scanner (ppcre:create-scanner
+                                         ".*\.(jpg|png|gif)$"
+                                         :case-insensitive-mode t)))
+                           (if (ppcre:scan scanner link )
+                               (img-link link label)
+                               (cmd-link link label))))
+                     :simple-calls t))
+
+
+(defun md-rep (txt)
+  (lrep (md txt)))
+
+
+
+
+;; make 3bmd handle pup-style wiki-like links (depreciated)
 (defclass pup-md () ())
 
 (defmethod 3bmd-wiki::process-wiki-link ((p pup-md) nt ft args stream)
@@ -109,13 +154,6 @@
         (format stream (img-link link ft))
         (format stream (cmd-link link ft)))))
 
-(defun get-input ()
-  (or (post-parameter "input")
-      (get-parameter "input")))
-
-(defun md (txt)
-  (with-output-to-string (str)
-    (3bmd:parse-string-and-print-to-stream txt str)))
 
 #++ (with-output-to-string (s)
       (3bmd:parse-string-and-print-to-stream "[[bla bla|blog post]]" s))

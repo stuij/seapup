@@ -77,7 +77,7 @@
   (comment-sign-start))
 
 (defun comment-sign-start ()
-  (md "Write your name, or something like it, and I'll save your comment; unless you write [[quit|quit]] or [[redo|redo]]. Again they do what you think."))
+  (lrep "Write your name, or something like it, and I'll save your comment; unless you write [[quit|quit]] or [[redo|redo]]. Again they do what you think."))
 
 (defun comment-sign-done (context)
   (let* ((session (session-of context))
@@ -143,14 +143,14 @@ Here's the post again plus your comment:<br/>
   (comment-redo context))
 
 (defun show-comment-body (body)
-  (md (format nil "Type what you want to type, and press enter. Keep on typing and pressing enter if you have more to say. You can use [markdown](http://daringfireball.net/projects/markdown/) or HTML to make it all look pretty.
+  (md-rep (format nil "Type what you want to type, and press enter. Keep on typing and pressing enter if you have more to say. You can use [markdown](http://daringfireball.net/projects/markdown/) or HTML to make it all look pretty.
 
 So far, This is what we have:
  
 '~A'
 
 Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to do what you think they do."
-              (or body "[nothing yet]"))))
+                  (or body "[nothing yet]"))))
 
 ;; post
 (defstruct post
@@ -185,7 +185,10 @@ Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to d
         (let* ((body (post-body post))
                (clean-body (string-trim '(#\Space #\Tab #\Newline)
                                         body)))
-          (setf (post-body post) clean-body)))
+          (unless (post-summary post)
+            (setf (post-summary post)
+                  (subseq clean-body 0 (position #\newline clean-body))))
+          (setf (post-body post) (md clean-body))))
       post)))
 
 (defun parse-content-line (post line)
@@ -282,7 +285,8 @@ Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to d
   (let ((*tmp-blog-posts* '()))
     (walk-blog-dirs (cave "content/text/blog"))
     (setf *blog-posts* (sort *tmp-blog-posts* #'timestamp<
-                             :key #'get-post-date))))
+                             :key #'get-post-date)))
+  nil)
 
 (defun reparse-year-list ()
   (let ((*tmp-year-list* '()))
@@ -301,17 +305,17 @@ Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to d
 (defun blog ()
   (let ((min-items (min (length (get-posts)) 3)))
     (if (> min-items 0)
-        (format nil "
-You can browse the blog by ~A:</br>
+        (format nil (md-pre "
+You can browse the blog by ~A:
+~A  
+Or browse by ~A:  
 ~A
-</br>
-Or browse by ~A:</br>
-~A
-</br></br></br><br/>
-And these are the latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
 <br/><br/>
+
+And these are the latest posts, as far as I can tell. Have fun I guess.. If they wouldn't all be so dreary:
+
 ~A
-"
+")
                 (cmd-link "blog tags" "tags")
                 (print-all-tags)
                 (cmd-link "blog years" "years")
@@ -342,10 +346,10 @@ And these are the latest posts, as far as I can tell. Have fun I guess.. If they
     (cmd-link cmd title)))
 
 (defun get-summary (post)
-  (let* ((body (post-body post))
-         (summary (or (post-summary post)
-                      (subseq body 0 (position #\newline body)))))
-    (remove-paragraph (md summary))))
+  (lrep (post-summary post)))
+
+(defun get-body (post)
+  (lrep (post-body post)))
 
 (defun remove-paragraph (p)
   (register-groups-bind (middle)
@@ -374,25 +378,26 @@ And these are the latest posts, as far as I can tell. Have fun I guess.. If they
                     unless (or (string-equal tag "fallen-frukt")
                                (string-equal tag "jaded-puppy")
                                (string-equal tag "tales-from-the-underbelly"))
-                        collect (cmd-link (format nil "blog tag ~A" tag)
-                                          (format nil "~A(~A)" tag (length posts))))))
-    (md (format nil "Ex-blogs from other places revamped here for your pleasure:
+                      collect (cmd-link (format nil "blog tag ~A" tag)
+                                        (format nil "~A(~A)" tag (length posts))))))
+    (lrep (format nil (md-pre "Ex-blogs from other places revamped here for your pleasure:
 
-- [[jaded-puppy|jaded-puppy]] - 2005-2007 - Jaded puppy's adventures in Sweden
-- [[fallen-frukt|blog tag fallen-frukt]] - 2005-2008 - Common Lisp programming
-- [[tales-from-the-underbelly|tales-from-the-underbelly]] - 2008-2011 - One Laptop Per Child/Nepal stuff, and some travelly/culturally things from other places.
+- [[tales-from-the-underbelly|blog tag tales-from-the-underbelly]] - One Laptop Per Child/Nepal stuff, and some travelly/culturally things from other places - 2008-2011
+- [[fallen-frukt|blog tag fallen-frukt]] - Common Lisp programming - 2005-2008
+- [[jaded-puppy|blog tag jaded-puppy]] - Jaded puppy's adventures in Sweden - 2005-2007
+
 
 and the rest:
- ~{<span class='some-spacing'>~A</span>~^ ~}" tags))))
+ ~{<span class='some-spacing'>~A</span>~^ ~}") tags))))
 
 (defun get-posts-by-tag (tag)
   (if (string-equal tag "all")
-      (get-posts)
-      (gethash (string-downcase (remove-punctuation tag)) *tag-hash*)))
+      (reverse (get-posts))
+      (cdr (gethash (string-downcase (remove-punctuation tag)) *tag-hash*))))
 
 (defun print-blog-tag-posts (bindings)
   (bind-eliza-vars (%y) bindings
-    (let ((posts (cdr (get-posts-by-tag (first %y)))))
+    (let ((posts (get-posts-by-tag (first %y))))
       (if posts
           (print-posts posts)
           "Sorry, found no posts for that tag.."))))
@@ -440,18 +445,20 @@ and the rest:
 (defun print-post-proper (post)
   (format nil "
 <br/>
-<div class='title'>~A</div> <div class='timestamp'>~A</div>
+<div class='title'>~A</div>
+<div class='timestamp'>~A</div>
+<br/>
 ~A
 ~A<br/>
 ~A"
           (post-title post)
           (print-tags post)
           (print-blog-date (post-created post))
-          (md (post-body post))
+          (lrep (post-body post))
           (print-comments post)))
 
 (defun print-tags (post)
-  (md (format nil "tags: ~{[[~A|blog tag ~:*~A]]~^ ~}" (post-tags post))))
+  (lrep (format nil "tags: ~{[[~A|blog tag ~:*~A]]~^ ~}" (post-tags post))))
 
 (defun print-blog-date (date)
   (format-timestring nil date :format +puppy-date-format+))
@@ -467,10 +474,10 @@ and the rest:
 (defun print-single-comment (post)
   (format nil "
 <br/><div class='timestamp'>on ~A ~A said:</div>
-~A<br/><br/>"
+~A"
           (print-blog-date (post-created post))
           (post-author post)
-          (regex-replace "<p>" (md (post-body post)) "<p class='comment-head'>")))
+          (lrep (post-body post))))
 
 (defun find-post (msg)
   (loop for post in (get-posts)

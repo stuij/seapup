@@ -42,8 +42,8 @@
   (make-random-state)
   (load-config)
   (cl-interpol:enable-interpol-syntax)
-  (setf 3bmd-wiki:*wiki-links* t)
-  (setf 3bmd-wiki:*wiki-processor* (make-instance 'pup-md))
+  ;; (setf 3bmd-wiki:*wiki-links* t)
+  ;; (setf 3bmd-wiki:*wiki-processor* (make-instance 'pup-md))
   (setf cl-who:*downcase-tokens-p* nil)
   (setf *rewrite-for-session-urls* nil)
   (setf *session-max-time* (* 60 60 4))
@@ -163,7 +163,7 @@
            :debug ,(json:encode-json-to-string *debug-js*)
            :input-url ,(format nil "/?~A=~A" *puppy-session*
                                (session-cookie-value session))
-           :welcome ,(md "Confused? Type [[help|help]].")
+           :welcome ,(lrep "Confused? Type [[help|help]].")
            :input ,input
            :output ,(eliza-grok input session)))))))
 

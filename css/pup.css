@@ -12,6 +12,8 @@ body, html
 
 a {color: #6ca6cd; text-decoration: none;} /* deep sky blue 3 */
 
+p { margin-top: 0px }
+
 hr
 { height: 1px;
   margin: 1em 1em 2em 0;

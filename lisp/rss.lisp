@@ -20,7 +20,7 @@
            (:|url| "http://awarewolf.io/static/img/favicons/favicon-196x196.png")
            (:|title| "Awarewolf/Seapup")
            (:|link| "https://awarewolf.io"))         
-         (let* ((all-posts (reverse (get-posts-by-tag category)))
+         (let* ((all-posts (get-posts-by-tag category))
                 (posts (subseq all-posts 0 (min 15 (length all-posts)))))
            (loop for post in posts
                  do (cl-who:htm (:|item|
@@ -34,7 +34,7 @@
                                               (cl-who:str (format nil "<![CDATA[~A]]>" cat)))))
                                   (:|guid| (cl-who:esc (blog-link post)))
                                   (:|description| (cl-who:str (format nil "<![CDATA[~A]]>" (get-summary post))))
-                                  (:|content:encoded| (cl-who:str (format nil "<![CDATA[~A]]>" (post-body post))))
+                                  (:|content:encoded| (cl-who:str (format nil "<![CDATA[~A]]>" (get-body post))))
                                   (:|pubDate| (cl-who:str (format-timestring
                                                            nil
                                                            (get-post-date post)
