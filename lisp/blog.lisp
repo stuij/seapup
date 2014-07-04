@@ -70,14 +70,8 @@
                                                    (session-of context))))
     (comment-first comment-context)))
 
-(defun comment-done (context)
-  (add-comment-sign-context (post-of context)
-                            (comment-of context)
-                            (session-of context))
-  (comment-sign-start))
-
 (defun comment-sign-start ()
-  (lrep "Write your name, or something like it, and I'll save your comment; unless you write [[quit|quit]] or [[redo|redo]]. Again they do what you think."))
+  (lrep "Write your name, or something like it, and I'll save your comment. Or write [[quit|quit]] or [[redo|redo]]."))
 
 (defun comment-sign-done (context)
   (let* ((session (session-of context))
@@ -124,7 +118,13 @@ Here's the post again plus your comment:<br/>
 
 ~A"
           (post-title (post-of context))
-          (show-comment-body (post-body (comment-of context)))))
+          (show-comment-body)))
+
+(defun comment-done (context)
+  (add-comment-sign-context (post-of context)
+                            (comment-of context)
+                            (session-of context))
+  (comment-sign-start))
 
 (defun comment-more (context)
   (let* ((input (get-input))
@@ -137,30 +137,28 @@ Here's the post again plus your comment:<br/>
                        old-body)))
     (when new-body
       (setf (post-body (comment-of context)) new-body))
-    (show-comment-body new-body)))
+    (add-comment-sign-context (post-of context)
+                              (comment-of context)
+                              (session-of context))
+    (comment-sign-start)))
 
 (defun comment-redo (context)
   (setf (post-body (comment-of context)) nil)
   (format nil "Ok, we're all clean as a baby's bottom again. Let's try once more.
 
 ~A"
-          (show-comment-body nil)))
+          (show-comment-body)))
 
 (defun comment-sign-redo (context)
   (remove-context *comment-sign-context-token* (session-of context))
   (comment-redo context))
 
-(defun show-comment-body (body)
-  (format nil (md-rep "So far, This is what you typed:
- 
-<div class='user-input'>
-~A
-</div>
+(defun show-comment-body ()
+  (format nil (lrep (md-pre "
 
-Type what you want to type, and press enter. Keep on typing and pressing enter if you have more to say. You can use [markdown](http://daringfireball.net/projects/markdown/) or HTML to make it all look pretty.
+Type your comment or type [[quit|quit]].
 
-Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to do what you think they do.")
-          (if body (md-rep body) (md "[nothing yet]"))))
+For you nerdy types, you can use [markdown](http://daringfireball.net/projects/markdown/) or inline HTML to make it all look pretty."))))
 
 ;; post
 (defstruct post
