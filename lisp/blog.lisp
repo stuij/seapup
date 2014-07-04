@@ -463,12 +463,15 @@ and the rest:
 <br/>
 ~A
 ~A<br/>
+~A
+<br/>
 ~A"
           (post-title post)
           (print-tags post)
           (print-blog-date (post-created post))
           (lrep (post-body post))
-          (print-comments post)))
+          (print-comments post)
+          (lrep "Want to comment? Type [[comment|comment]].")))
 
 (defun print-tags (post)
   (lrep (format nil "tags: ~{[[~A|blog tag ~:*~A]]~^ ~}" (post-tags post))))
