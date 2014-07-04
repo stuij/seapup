@@ -96,7 +96,8 @@
     (write-single-comment comment post-dir comment-name)
     (remove-context *comment-sign-context-token* session)
     (remove-context *blog-comment-context-token* session)
-    (reparse-content)
+    (finalise-post comment)
+    (push comment (post-comments post))
     (format nil "Yay, comment written :)<br/>
 Here's the post again plus your comment:<br/>
 <br/>
@@ -181,15 +182,18 @@ Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to d
       (setf (post-path post) path)
       (loop for line = (read-line stream nil)
             while line do (parse-content-line post line))
-      (when (post-body post)
+      (finalise-post post)
+      post)))
+
+(defun finalise-post (post)
+  (when (post-body post)
         (let* ((body (post-body post))
                (clean-body (string-trim '(#\Space #\Tab #\Newline)
                                         body)))
           (unless (post-summary post)
             (setf (post-summary post)
                   (subseq clean-body 0 (position #\newline clean-body))))
-          (setf (post-body post) (md clean-body))))
-      post)))
+          (setf (post-body post) (md clean-body)))))
 
 (defun parse-content-line (post line)
   (if (post-body post)
@@ -276,7 +280,7 @@ Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to d
           (push post *tmp-blog-posts*)
           (when comments
             (setf (post-comments post)
-                  (sort comments #'timestamp<
+                  (sort comments #'timestamp>
                         :key #'get-post-date))))
         (when (and comments (not post))
           (err "there were comments, but no blog-post in dir " dir)))))
@@ -468,7 +472,7 @@ and the rest:
     (when (post-comments post)
       (setf out "comments</br>
 "))
-    (dolist (c (post-comments post) out)
+    (dolist (c (reverse (post-comments post)) out)
       (setf out (strcat out (print-single-comment c))))))
 
 (defun print-single-comment (post)
