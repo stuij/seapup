@@ -13,7 +13,9 @@
     <meta name="keywords" content="AwareWolf, Seapup, wolf, pup, Common Lisp, robot, lost at sea, AI winter is coming">
     <meta name="author" content="Ties Stuij">
 
-    <link rel="alternate" type="application/rss+xml" title="Awarewolf/Seapup Feed" href="http://awarewolf.io/feed?cat=all"/>
+    
+    <link rel="alternate" type="application/rss+xml" title="Awarewolf/Seapup feed" href="http://awarewolf.io/feed?cat=all"/>
+    <link rel="alternate" type="application/rss+xml" title="Awarewolf/Seapup hardware/software nerdy feed" href="http://awarewolf.io/feed?cat=hackery"/>
 
     
     <!-- Automatic favicon resizings done by the very handy http://realfavicongenerator.net -->

@@ -1,7 +1,8 @@
 (in-package :pup)
 
 (defun rss (category)
-  (let ((cat-url (format nil "http://awarewolf.io/feed?cat=~A" category)))
+  (let ((cat-url (format nil "http://awarewolf.io/feed?cat=~A" category))
+        (cat-title (get-cat-text category)))
     (cl-who:with-html-output-to-string (s nil :prologue "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>")
       (:|rss| :|version| "2.0"
         :|xmlns:atom| "http://www.w3.org/2005/Atom"
@@ -10,7 +11,8 @@
        :|xmlns:sy| "http://purl.org/rss/1.0/modules/syndication/"
         :|xmlns:wfw| "http://wellformedweb.org/CommentAPI/"
        :|xmlns:slash| "http://purl.org/rss/1.0/modules/slash/"
-       (:|channel| (:|title| "Awarewolf/Seapup: an uncomfortable marriage in the head")
+       (:|channel|
+         (:|title| (cl-who:str cat-title))
          (:|link| "https://awarewolf.io")
          (:|atom:link| :|href| cat-url :|rel| "self" :|type| "application/rss+xml")
          (:|description| "Musings of an aquatic shape-shifting cyborg canine")
@@ -39,4 +41,8 @@
                                                            nil
                                                            (get-post-date post)
                                                            :format  +rfc-1123-format+))))))))))))
+
+(defun get-cat-text (cat)
+  (strcat "Awarewolf/Seapup: an uncomfortable marriage in the head. Category: "
+          cat))
 
