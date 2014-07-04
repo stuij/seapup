@@ -115,7 +115,7 @@ Here's the post again plus your comment:<br/>
 
 (defun comment-first (context)
   (format nil "So you wanna make a comment on blog post '~A'? Ok, cool :)
-
+</br></br>
 ~A"
           (post-title (post-of context))
           (show-comment-body)))
@@ -156,9 +156,7 @@ Here's the post again plus your comment:<br/>
 (defun show-comment-body ()
   (format nil (lrep (md-pre "
 
-Type your comment or type [[quit|quit]].
-
-For you nerdy types, you can use [markdown](http://daringfireball.net/projects/markdown/) or inline HTML to make it all look pretty."))))
+Type your comment or type [[quit|quit]]."))))
 
 ;; post
 (defstruct post
