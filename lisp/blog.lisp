@@ -98,11 +98,18 @@
     (remove-context *blog-comment-context-token* session)
     (finalise-post comment)
     (push comment (post-comments post))
+    (send-comment-mail post comment)    
     (format nil "Yay, comment written :)<br/>
 Here's the post again plus your comment:<br/>
 <br/>
 ~A"
             (eliza-grok (strcat "blog post " (post-title post)) *session*))))
+
+(defun send-comment-mail (post comment)
+  (let ((cmd-string (format nil "mail -s 'new comment from ~A, on post: ~A' ties@stuij.se < /dev/null"
+                            (post-author comment)
+                            (post-title post))))
+    (pup-shell-cmd cmd-string)))
 
 (defun comment-quit (context)
   (remove-context *blog-comment-context-token* (session-of context))
@@ -144,14 +151,16 @@ Here's the post again plus your comment:<br/>
   (comment-redo context))
 
 (defun show-comment-body (body)
-  (md-rep (format nil "Type what you want to type, and press enter. Keep on typing and pressing enter if you have more to say. You can use [markdown](http://daringfireball.net/projects/markdown/) or HTML to make it all look pretty.
-
-So far, This is what we have:
+  (format nil (md-rep "So far, This is what we have:
  
-'~A'
+<div class='user-input'>
+~A
+</div>
 
-Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to do what you think they do."
-                  (or body "[nothing yet]"))))
+Type what you want to type, and press enter. Keep on typing and pressing enter if you have more to say. You can use [markdown](http://daringfireball.net/projects/markdown/) or HTML to make it all look pretty.
+
+Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to do what you think they do.")
+          (if body (md-rep body) "[nothing yet]")))
 
 ;; post
 (defstruct post
@@ -187,13 +196,13 @@ Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to d
 
 (defun finalise-post (post)
   (when (post-body post)
-        (let* ((body (post-body post))
-               (clean-body (string-trim '(#\Space #\Tab #\Newline)
-                                        body)))
-          (unless (post-summary post)
-            (setf (post-summary post)
-                  (subseq clean-body 0 (position #\newline clean-body))))
-          (setf (post-body post) (md clean-body)))))
+    (let* ((body (post-body post))
+           (clean-body (string-trim '(#\Space #\Tab #\Newline)
+                                    body)))
+      (unless (post-summary post)
+        (setf (post-summary post)
+              (subseq clean-body 0 (position #\newline clean-body))))
+      (setf (post-body post) (md clean-body)))))
 
 (defun parse-content-line (post line)
   (if (post-body post)

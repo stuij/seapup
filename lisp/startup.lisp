@@ -1,4 +1,4 @@
-(require 'asdf)
+(load "/home/zeno/seapup/content/asdf/build/asdf.lisp")
 
 (defmethod asdf:perform :around ((o asdf:load-op) (c asdf:cl-source-file))
   (handler-case (call-next-method o c)

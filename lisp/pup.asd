@@ -5,7 +5,7 @@
   :depends-on (:alexandria :cl-ppcre :cl-interpol :cl-fad
                :split-sequence :local-time :cl-who :rss
                :hunchentoot :html-template :cl-json
-               :3bmd :3bmd-ext-wiki-links)
+               :3bmd :3bmd-ext-wiki-links :inferior-shell)
   :serial t
   :components
   ((:file "package")

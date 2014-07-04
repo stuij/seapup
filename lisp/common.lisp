@@ -102,6 +102,16 @@
   (or (post-parameter "input")
       (get-parameter "input")))
 
+(defun pup-shell-cmd (cmd-string)
+  (let ((error-string (strcat "error sending comment: " cmd-string)))
+    ;; wrapping in handler-case, because handler-bind curiously didn't seem
+    ;; to work on my slime repl at least. Leaving the :on-error for now
+    (handler-case
+        (inferior-shell:run/ss cmd-string
+         :on-error #'(lambda ()
+                       (pup::dbg error-string)))
+      (error () (pup::dbg error-string)))))
+
 
 ;; parsing and replacing output strings
 
