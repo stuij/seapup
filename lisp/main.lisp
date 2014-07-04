@@ -163,7 +163,7 @@
            :debug ,(json:encode-json-to-string *debug-js*)
            :input-url ,(format nil "/?~A=~A" *puppy-session*
                                (session-cookie-value session))
-           :welcome ,(lrep "Confused? Type [[help|help]].")
+           :welcome ,(lrep "Confused? Type [[help|help]]")
            :input ,input
            :output ,(eliza-grok input session)))))))
 
