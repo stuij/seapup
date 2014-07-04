@@ -152,12 +152,12 @@ var terminal =
              rpc = an_rpc;
 
              setup_plumbing();
-             focus_on_input();
              massage_term_div($("#top"));
              // $("#padding").height(0);
              
              setTimeout(function() {
                             scrollTo($("#top"));
+                            focus_on_input();
                         }, 2000);
 
              maybe_input_hash();
