@@ -151,7 +151,7 @@ Here's the post again plus your comment:<br/>
   (comment-redo context))
 
 (defun show-comment-body (body)
-  (format nil (md-rep "So far, This is what we have:
+  (format nil (md-rep "So far, This is what you typed:
  
 <div class='user-input'>
 ~A
@@ -160,7 +160,7 @@ Here's the post again plus your comment:<br/>
 Type what you want to type, and press enter. Keep on typing and pressing enter if you have more to say. You can use [markdown](http://daringfireball.net/projects/markdown/) or HTML to make it all look pretty.
 
 Type [[done|done]], [[redo|redo]] or [[quit|quit]] by themselves on a line, to do what you think they do.")
-          (if body (md-rep body) "[nothing yet]")))
+          (if body (md-rep body) (md "[nothing yet]"))))
 
 ;; post
 (defstruct post
