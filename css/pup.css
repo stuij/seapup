@@ -30,6 +30,13 @@ hr:after
   letter-spacing: 2em;
   }
 
+
+#seapup
+{
+  padding: 50px;
+  vertical-align: middle;
+  text-align: center }
+
 .scroll-down-maybe
 {
   z-index: -1;

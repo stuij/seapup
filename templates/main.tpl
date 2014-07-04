@@ -14,8 +14,8 @@
     <meta name="author" content="Ties Stuij">
 
     
-    <link rel="alternate" type="application/rss+xml" title="Awarewolf/Seapup feed" href="http://awarewolf.io/feed?cat=all"/>
-    <link rel="alternate" type="application/rss+xml" title="Awarewolf/Seapup hardware/software nerdy feed" href="http://awarewolf.io/feed?cat=hackery"/>
+    <link rel="alternate" type="application/rss+xml" title="Awarewolf/Seapup feed" href="https://awarewolf.io/feed?cat=all"/>
+    <link rel="alternate" type="application/rss+xml" title="Awarewolf/Seapup hardware/software nerdy feed" href="https://awarewolf.io/feed?cat=hackery"/>
 
     
     <!-- Automatic favicon resizings done by the very handy http://realfavicongenerator.net -->
@@ -64,8 +64,11 @@
     </script>
   </head> 
   <body>
-    <div class="background"></div>    
+    <div class="background"></div>
     <div id="padding">
+      <div id="seapup">
+        <img src="/static/img/seapup.png">
+      </div>
     </div>
     <div id="output">
       <div id="top">
