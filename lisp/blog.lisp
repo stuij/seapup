@@ -91,13 +91,20 @@
     (remove-context *comment-sign-context-token* session)
     (remove-context *blog-comment-context-token* session)
     (finalise-post comment)
-    (push comment (post-comments post))
-    (send-comment-mail post comment)    
-    (format nil "Yay, comment written :)<br/>
+    (send-comment-mail post comment)
+    (let ((curr-post (find-current-post post)))
+      (push comment (post-comments curr-post))    
+      (format nil "Yay, comment written :)<br/>
 Here's the post again plus your comment:<br/>
 <br/>
 ~A"
-            (eliza-grok (strcat "blog post " (post-title post)) *session*))))
+              (print-post-proper curr-post)))))
+
+(defun find-current-post (post)
+  (let ((title (post-title post)))
+    (loop for p in *blog-posts*
+          do (when (equal (post-title p) title)
+               (return p)))))
 
 (defun send-comment-mail (post comment)
   (let ((cmd-string (format nil "mail -s 'new comment from ~A, on post: ~A' ties@stuij.se < /dev/null"
