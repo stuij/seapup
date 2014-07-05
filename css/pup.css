@@ -121,6 +121,11 @@ hr:after
   font-size: 0.9em;
   }
 
+.tag-line
+{ color: #696969;
+  font-size: 0.9em;
+  }
+
 .title { font-size: 1.4em; }
 
 #input-input { color: #ffa07a; /* light salmon */

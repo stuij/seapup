@@ -455,9 +455,9 @@ and the rest:
   (format nil "
 <br/>
 <div class='title'>~A</div>
+<div class='tag-line'>~A</div>
 <div class='timestamp'>~A</div>
 <br/>
-~A
 ~A<br/>
 ~A
 <br/>
@@ -470,7 +470,7 @@ and the rest:
           (lrep "Want to comment? Type [[comment|comment]].")))
 
 (defun print-tags (post)
-  (lrep (format nil "tags: ~{[[~A|blog tag ~:*~A]]~^ ~}" (post-tags post))))
+  (lrep (format nil "tags: ~{<span class='right-spacing'>[[~A|blog tag ~:*~A]]</span>~^ ~}" (post-tags post))))
 
 (defun print-blog-date (date)
   (format-timestring nil date :format +puppy-date-format+))
