@@ -1,5 +1,24 @@
 (in-package :pup)
 
+(defparameter +puppy-date-format+
+  ;; Sun, 06 Nov 1994 08:49:37
+  '(:short-weekday ", " (:day 2) #\space
+    :short-month #\space (:year 4) #\space
+    (:hour 2) #\: (:min 2) #\: (:sec 2)))
+
+(defparameter +post-identifier-format+
+  '((:year 4) "-" (:month 2) "-" (:day 2) #\space
+    (:hour 2) #\: (:min 2) #\: (:sec 2) "." :nsec))
+
+(defparameter +conversation-format+
+  '((:year 4) "-" (:month 2) "-" (:day 2) "."
+    (:hour 2) "-" (:min 2) "-" (:sec 2)))
+
+(defparameter +parsable-timestring-format+
+  '((:year 4) "-" (:month 2) "-" (:day 2) #\space
+    (:hour 2) #\: (:min 2) #\: (:sec 2)))
+
+
 (defun punctuation-p (char) (find char ".,;:!'*?#-()\\\""))
 
 (defun remove-punctuation (str)

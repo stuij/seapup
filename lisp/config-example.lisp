@@ -17,13 +17,15 @@
 ;; when set to true, errors are caught and logged by hunchentoot
 ;; when set to nil, they go to the debugger. So for production,
 ;; set to to true
-(setf *catch-errors-p* t)
+(setf *catch-errors-p* nil)
 
 ;; when set, lisp errors are output to html
 (setf *show-lisp-errors-p* nil)
 
 (defparameter *debug* t)
 (defparameter *debug-js* t)
+
+(defparameter *log-conversations* nil)
 
 ;; paths
 (defparameter *ssl-private-key* (cave "volatile/certificates/CA.key"))
@@ -32,3 +34,5 @@
 
 (defparameter *message-log-pathname* (logfile "pup-message.log"))
 (defparameter *access-log-pathname*  (logfile "pup-access.log"))
+(defparameter *ssl-message-log-pathname* (logfile "pup-ssl-message.log"))
+(defparameter *ssl-access-log-pathname*  (logfile "pup-ssl-access.log"))

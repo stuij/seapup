@@ -153,9 +153,11 @@
                  :host *link-host*
                  :port *link-port*
                  :code +http-moved-permanently+)
-    (let ((session (start-puppy-session (post-parameter "session")))
-          (input (or (get-input)
-                     "hiya")))
+    (let* ((session (start-puppy-session (post-parameter "session")))
+           (input (or (get-input)
+                      "hiya"))
+           (output (eliza-grok input session)))
+      (add-conversation-sliver session input output)
       (with-output-to-string (*default-template-output*)
         (fill-and-print-template
          (cave "templates/main.tpl")
@@ -165,7 +167,24 @@
                                (session-cookie-value session))
            :welcome ,(lrep "Confused? Type [[help|help]]")
            :input ,input
-           :output ,(eliza-grok input session)))))))
+           :output ,output))))))
+
+(defun add-conversation-sliver (session input output)
+  (when (and (not (botp *request*))
+             *log-conversations*)
+    (let* ((file (get-conversation-file session)))
+      (with-output-to-file (strm file :if-exists :append
+                                      :if-does-not-exist :create)
+        (prin1 (list input output) strm)
+        (format strm "~%")))))
+
+(defun get-conversation-file (session)
+  (let* ((sid (hunchentoot::session-string session))
+         (time (local-time:universal-to-timestamp (session-start session))))
+    (format nil "~A~A_~A"
+            (cave "volatile/conversations/")
+            (format-timestring nil time :format +conversation-format+)
+            sid)))
 
 (defun botp (&optional (request *request*))
   (scan *bot-scanner* (user-agent request)))
@@ -195,6 +214,7 @@
       (push `("input" . ,input) get-parameters))
     (let* ((session (start-puppy-session (cdr (assoc :session data))))
            (result (eliza-grok input session)))
+      (add-conversation-sliver session input result)
       `((,*puppy-session* . ,(session-cookie-value session))
         (output . ,result)))))
 
