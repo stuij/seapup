@@ -6,16 +6,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <html>
   <head>
-    <title>AwareWolf/Seapup</title>
+    <title>Seapup/Awarewolf</title>
 
     <meta charset="UTF-8">
     <meta name="description" content="A Seapup and an AwareWolf. Stuck in one head.">
     <meta name="keywords" content="AwareWolf, Seapup, wolf, pup, Common Lisp, robot, lost at sea, AI winter is coming">
     <meta name="author" content="Ties Stuij">
 
-    
-    <link rel="alternate" type="application/rss+xml" title="Awarewolf/Seapup feed" href="https://awarewolf.io/feed?cat=all"/>
-    <link rel="alternate" type="application/rss+xml" title="Awarewolf/Seapup hardware/software nerdy feed" href="https://awarewolf.io/feed?cat=hackery"/>
+
+    <link rel="alternate" type="application/rss+xml" title="Seapup/Awarewolf feed" href="https://seapup.nl/feed?cat=all"/>
+    <link rel="alternate" type="application/rss+xml" title="Seapup/Awarewolf hardware/software nerdy feed" href="https://seapup.nl/feed?cat=hackery"/>
 
     
     <!-- Automatic favicon resizings done by the very handy http://realfavicongenerator.net -->

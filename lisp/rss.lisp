@@ -1,7 +1,7 @@
 (in-package :pup)
 
 (defun rss (category)
-  (let ((cat-url (format nil "http://awarewolf.io/feed?cat=~A" category))
+  (let ((cat-url (format nil "http://seapup.nl/feed?cat=~A" category))
         (cat-title (get-cat-text category)))
     (cl-who:with-html-output-to-string (s nil :prologue "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>")
       (:|rss| :|version| "2.0"
@@ -13,15 +13,15 @@
        :|xmlns:slash| "http://purl.org/rss/1.0/modules/slash/"
        (:|channel|
          (:|title| (cl-who:str cat-title))
-         (:|link| "https://awarewolf.io")
+         (:|link| "https://seapup.nl")
          (:|atom:link| :|href| cat-url :|rel| "self" :|type| "application/rss+xml")
          (:|description| "Musings of an aquatic shape-shifting cyborg canine")
          (:|sy:updatePeriod| "hourly")
          (:|sy:updateFrequency| "1")
          (:|image|
-           (:|url| "http://awarewolf.io/static/img/favicons/favicon-196x196.png")
-           (:|title| "Awarewolf/Seapup")
-           (:|link| "https://awarewolf.io"))         
+           (:|url| "http://seapup.nl/static/img/favicons/favicon-196x196.png")
+           (:|title| "Seapup/Awarewolf")
+           (:|link| "https://seapup.nl"))         
          (let* ((all-posts (get-posts-by-tag category))
                 (posts (subseq all-posts 0 (min 15 (length all-posts)))))
            (loop for post in posts
@@ -43,6 +43,6 @@
                                                            :format  +rfc-1123-format+))))))))))))
 
 (defun get-cat-text (cat)
-  (strcat "Awarewolf/Seapup: an uncomfortable marriage in the head. Category: "
+  (strcat "Seapup/Awarewolf: an uncomfortable marriage in the head. Category: "
           cat))
 
