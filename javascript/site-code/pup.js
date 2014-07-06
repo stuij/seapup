@@ -173,13 +173,18 @@ var terminal =
              set_input_history();
              massage_term_div($("#top"));
              // $("#padding").height(0);
-             
-             setTimeout(function() {
-                            scrollTo($("#top"));
-                            focus_on_input();
-                        }, 2000);
-
+             scroll_maybe();
              maybe_input_hash();
+         };
+
+         var scroll_maybe = function() {
+             setTimeout(function() {
+                            if(document.body.scrollTop == 0) {   
+                                scrollTo($("#top"));
+                                focus_on_input();
+                            }
+                        }, 2000);
+             
          };
 
          var input_up = function () {
