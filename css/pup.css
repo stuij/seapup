@@ -2,6 +2,7 @@
 
 body, html
 {
+  background-color: #262626;
   font-family: helvetica;
   font-size: 100%;
   color: #aaa;
@@ -39,25 +40,12 @@ hr:after
 
 .scroll-down-maybe
 {
-  z-index: -1;
-  background-color: #262626;
   position: fixed;
   width: 100%;
   clear: both;
   height: 40px;
   bottom: 40px;
   border: none;
-  }
-
-.background
-{
-  z-index: -2;
-  background-color: #262626;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  margin-top: 0px;
-  clear: both;
   }
 
 .scroll-down-maybe-inner

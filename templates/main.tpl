@@ -64,7 +64,6 @@
     </script>
   </head> 
   <body>
-    <div class="background"></div>
     <div id="padding">
       <div id="seapup">
         <img src="/static/img/seapup.png">
