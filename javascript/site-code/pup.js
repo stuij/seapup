@@ -22,6 +22,22 @@ var dbg = function () {
     }
 };
 
+$.fn.selectRange = function(start, end) {
+    if(!end) end = start; 
+    return this.each(function() {
+                         if (this.setSelectionRange) {
+                             this.focus();
+                             this.setSelectionRange(start, end);
+                         } else if (this.createTextRange) {
+                             var range = this.createTextRange();
+                             range.collapse(true);
+                             range.moveEnd('character', end);
+                             range.moveStart('character', start);
+                             range.select();
+                         }
+                     });
+};
+
 var detectIE = function () {
     var ua = window.navigator.userAgent;
     var msie = ua.indexOf('MSIE ');
@@ -140,6 +156,8 @@ var terminal =
          var $out;
          var rpc;
          var History = window.History;
+         var cmd_history = [];
+         var cmd_history_pos = 0;
 
          var focus_on_input = function () {
              $in_input[0].focus();
@@ -152,6 +170,7 @@ var terminal =
              rpc = an_rpc;
 
              setup_plumbing();
+             set_input_history();
              massage_term_div($("#top"));
              // $("#padding").height(0);
              
@@ -161,6 +180,47 @@ var terminal =
                         }, 2000);
 
              maybe_input_hash();
+         };
+
+         var input_up = function () {
+             var prev_pos = cmd_history_pos;
+             cmd_history_pos = Math.max(0, cmd_history_pos - 1);    
+             set_cmd_pos(prev_pos);
+         };
+
+         var input_down = function () {
+             var prev_pos = cmd_history_pos;
+             cmd_history_pos = Math.min(cmd_history.length, cmd_history_pos + 1);
+             set_cmd_pos(prev_pos);
+         };
+
+         var set_cmd_pos = function (prev_pos) {
+             pos = cmd_history_pos;
+             if (!(pos === prev_pos)) {
+                 if (pos === cmd_history_pos.length) {
+                     $in_input.val("");
+                 } else {
+                     $in_input.val(cmd_history[pos]);
+                     var len =  $in_input.val().length;
+                     setTimeout(function(){
+                                    $in_input.selectRange(len);
+                                },10);
+                 }  
+             }
+         };
+
+         var add_cmd = function (cmd) {
+             cmd_history_pos = cmd_history.push(cmd);
+         };
+
+         var set_input_history = function () {             
+             $in_input.on('keydown', function (event) {
+                              if (event.which === 38 || event.which === 104) {
+                                  input_up();
+                              } else if (event.which === 40 || event.which === 98) {
+                                  input_down();
+                              }
+                          });  
          };
 
          var maybe_input_hash = function () {
@@ -209,7 +269,9 @@ var terminal =
          };
 
          var input_submit = function () {
-             user_input($in_input.val());
+             var cmd = $in_input.val();
+             user_input(cmd);
+             add_cmd(cmd);
              $in_input.val("");
              return false;
          };
