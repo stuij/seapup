@@ -9,3 +9,7 @@
 #output
 { width: auto;
   }
+
+.site-img
+{
+  max-width: 100%; }
