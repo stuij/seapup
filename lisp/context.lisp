@@ -1,11 +1,22 @@
 (in-package :pup)
 
 ;; catch-all
+(defclass pup-catch-all ()
+  ((context :initarg :context :accessor context-of)
+   (freq :initarg :freq :accessor freq-of)
+   (res-fn :initarg :res-fn :accessor res-fn-of)))
+
+(defun make-catch-all (context freq res-fn)
+  (make-instance 'pup-catch-all
+                 :context context
+                 :freq freq
+                 :res-fn res-fn))
+
 (defun find-catch-all (key session)
   (assoc key (session-value 'context-catch-all session) :test #'equal))
 
-(defun add-catch-all (key catch-all context session)
-  (push `(,key  . ,(cons catch-all context))
+(defun add-catch-all (key catch-all context freq session)
+  (push `(,key  . ,(make-catch-all context freq catch-all))
         (session-value 'context-catch-all session)))
 
 (defun remove-catch-all (key session)
@@ -20,6 +31,7 @@
    (catch-all-hook :initarg :catch-all-hook
                    :accessor catch-all-hook-of
                    :initform nil)
+   (catch-all-freq :initarg :catch-all-freq :accessor catch-all-freq-of)
    (input-hook :initarg :input-hook :accessor input-hook-of)
    (session :initarg :session :accessor session-of)))
 
@@ -30,7 +42,8 @@
   (setf (session-of context) session)
   (push `(,key  . ,context) (session-value 'context-tree session))
   (when (catch-all-hook-of context)
-    (add-catch-all key (catch-all-hook-of context) context session))
+    (add-catch-all key (catch-all-hook-of context) context
+                   (catch-all-freq-of context) session))
   context)
 
 (defun remove-context (key session)
@@ -56,24 +69,28 @@
      "i am not interested in names")
     (((%* %x) blog (%* %y))
      ,#'(lambda (bindings context)
-          (declare (ignorable context))
-          (blog bindings)))))
+          (declare (ignorable bindings context))
+          (blog)))))
 
 (defparameter *base-catch-all*
   (lambda (input context)
     (declare (ignorable input context))
     "I'm a sea-dragon, not an eel-cat!"))
 
+(defparameter *base-catch-all-freq* 50)
+
 ;; machinations
 (defun context-init (session)
   (let ((base-context (make-base-context)))
-    (add-context 'base-context base-context session)))
+    (add-context 'base-context base-context session)
+    (add-blog-catch-all session base-context)))
 
 (defun make-base-context ()
   (make-instance 'pup-context
                  :id 'base-context
                  :rules (lambda () *base-rules*)
-                 :catch-all-hook (lambda () *base-catch-all*)))
+                 :catch-all-hook (lambda () *base-catch-all*)
+                 :catch-all-freq *base-catch-all-freq*))
 
 (defun reset-context (session)
   (clear-context session)
@@ -94,9 +111,23 @@
                  (return output)))))
 
 (defun get-catch-all (input session)
-  (let ((catch-alist (cdr (random-elt
-                           (session-value 'context-catch-all session)))))
-    (funcall (funcall (car catch-alist)) input (cdr catch-alist))))
+  (let ((catch-all (choose-catch-all (session-value 'context-catch-all session))))
+    (if catch-all
+        (funcall (funcall (res-fn-of catch-all)) input (context-of catch-all))
+        "no catch all")))
+
+(defun choose-catch-all (catch-alls)
+  (when catch-alls
+    (let* ((tot (loop for c in catch-alls
+                      sum (freq-of (cdr c))))
+           (rnd (random tot)))
+      (loop with i = 0
+            for c in catch-alls
+            do (progn
+                 (setf i (+ i (freq-of (cdr c))))
+                 (if (< rnd i)
+                     (return (cdr c))))
+            finally (return nil)))))
 
 (defun load-contexts ()
   (cl-fad:walk-directory
@@ -108,4 +139,3 @@
                        "lisp")
                 (not (find #\# (namestring file)))))))
 
-(load-contexts)

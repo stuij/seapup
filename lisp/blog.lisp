@@ -8,6 +8,7 @@
 (defparameter *blog-comment-context-token* 'blog-comment)
 (defparameter *comment-sign-context-token* 'comment-sign)
 (defparameter *tag-hash* (make-hash-table :test 'equal))
+(defparameter *blog-catch-all-freq* 50)
 
 ;; blog context
 (defparameter *blog-post-rules*
@@ -19,6 +20,27 @@
           (format nil "You are about to make a dummy comment on blog post
 ~A."
                   (post-title (post-of context)))))))
+
+(defparameter *blog-catch-all-intros*
+  '("Hmm, that reminds me of something. See if this rings a bell:"
+    "You know I was thinking exactly the same thing! You know what happened to me the other day?!?! This:"
+    "Yea so as I was saying.. It was the middle of the night, and suddenly this happened:"
+    "Did I ever tell you about this:"
+    "Ok, actually I wasn't really listening. I was thinking of this:"))
+
+(defparameter *blog-post-catch-all*
+  #'(lambda (input context)
+      (declare (ignorable input))
+      (format nil (md-pre "~A
+~A")
+              (random-elt *blog-catch-all-intros*)
+              (print-post (random-elt *blog-posts*) context))))
+
+
+(defun add-blog-catch-all (session context)
+  (add-catch-all 'blog-base
+                 (lambda () *blog-post-catch-all*)
+                 context *blog-catch-all-freq* session))
 
 (defclass blog-post-context (pup-context)
   ((post :initarg :post :accessor post-of)))

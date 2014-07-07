@@ -48,6 +48,7 @@
   (setf *rewrite-for-session-urls* nil)
   (setf *session-max-time* (* 60 60 4))
   (reparse-content)
+  (load-contexts)
   (setf *dummy-session* (make-dummy-session)))
 
 (defclass puppy-acceptor (easy-acceptor) ())
@@ -162,12 +163,12 @@
         (fill-and-print-template
          (cave "templates/main.tpl")
          `(:accept-i18ns ,locales
-           :debug ,(json:encode-json-to-string *debug-js*)
-           :input-url ,(format nil "/?~A=~A" *puppy-session*
+           :debug        ,(json:encode-json-to-string *debug-js*)
+           :input-url    ,(format nil "/?~A=~A" *puppy-session*
                                (session-cookie-value session))
-           :welcome ,(lrep "Confused? Type [[help|help]]")
-           :input ,input
-           :output ,output))))))
+           :welcome      ,(lrep "Confused? Type [[help|help]]")
+           :input        ,input
+           :output       ,output))))))
 
 (defun add-conversation-sliver (session input output)
   (when (and (not (botp *request*))
