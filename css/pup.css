@@ -66,9 +66,17 @@ hr:after
   }
 
 .site-img
-{
+{ max-width: 95%; }
 
-  }
+.img-div
+{ display: inline-block; }
+
+.img-link
+{  }
+
+.img-container
+{ width: 100%;
+  text-align: center; }
 
 .input
 { position: fixed;
