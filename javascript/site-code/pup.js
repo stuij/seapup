@@ -184,7 +184,6 @@ var terminal =
                                 focus_on_input();
                             }
                         }, 2000);
-             
          };
 
          var input_up = function () {
