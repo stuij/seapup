@@ -335,6 +335,7 @@ Type your comment or type [[quit|quit]]."))))
   (reparse-blog)
   (reparse-year-list)
   (make-tag-hash)
+  (reparse-snippets)
   nil)
 
 

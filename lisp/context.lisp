@@ -79,11 +79,13 @@
 
 (defparameter *base-catch-all-freq* 50)
 
+
 ;; machinations
 (defun context-init (session)
   (let ((base-context (make-base-context)))
     (add-context 'base-context base-context session)
-    (add-blog-catch-all session base-context)))
+    (add-blog-catch-all session base-context)
+    (add-snippets-catch-all session base-context)))
 
 (defun make-base-context ()
   (make-instance 'pup-context
@@ -139,3 +141,45 @@
                        "lisp")
                 (not (find #\# (namestring file)))))))
 
+;; snippets
+(defparameter *snippets* '())
+(defparameter *snippets-freq* 50)
+
+(defparameter *snippets-catch-all*
+  #'(lambda (input context)
+      (declare (ignorable input context))
+      (random-elt *snippets*)))
+
+(defun reparse-snippets ()
+  (let ((snip-dir (cl-fad:list-directory (cave "content/text/snippets"))))
+    (setf *snippets*
+          (loop for snip-file in snip-dir
+                append (read-snippets snip-file)))))
+
+(defun read-snippets (file)
+  (with-open-file (stream file)
+    (loop with snippets = '()
+          with snip = ""
+          for line = (read-line stream nil)
+          while line do (if (equal line "^")
+                            (progn
+                              (when-let ((snip-clean (wash-snip snip)))
+                                (setf snippets
+                                      (append snippets (list (md snip-clean))))
+                                (setf snip "")))
+                            (setf snip (strcat snip line)))
+          finally (progn
+                    (when-let ((snip-clean (wash-snip snip)))
+                      (setf snippets
+                            (append snippets (list (md snip-clean)))))
+                    (return snippets)))))
+
+(defun wash-snip (snip)
+  (let ((snip-clean (string-trim '(#\Space #\Tab #\Newline) snip)))
+    (unless (equal snip "")
+      snip-clean)))
+
+(defun add-snippets-catch-all (session context)
+  (add-catch-all 'snippets-base
+                 (lambda () *snippets-catch-all*)
+                 context *snippets-freq* session))
