@@ -172,9 +172,13 @@
 (defun add-conversation-sliver (session input output)
   (when (and (not (botp *request*))
              *log-conversations*)
-    (let* ((file (get-conversation-file session)))
+    (let* ((file (get-conversation-file session))
+           (first (not (cl-fad:file-exists-p file))))
       (with-output-to-file (strm file :if-exists :append
                                       :if-does-not-exist :create)
+        (when first
+          (prin1 (list (remote-addr *request*) (request-uri *request*)
+                       (host) (user-agent session) (cookie-in session)) strm))
         (prin1 (list input output) strm)
         (format strm "~%")))))
 
