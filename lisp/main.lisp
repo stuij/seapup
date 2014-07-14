@@ -5,7 +5,7 @@
 (defparameter *last-ssl-acceptor* nil)
 (defparameter *last-session* nil)
 (defparameter *last-request* nil)
-(defparameter *bot-scanner* (create-scanner "google|msnbot|wget|curl|baiduspider|bingbot|rambler|yahoo|AbachoBOT|accoona|AcioRobot|ASPSeek|Dumbot|GeonaBot|Gigabot|Lycos|MSRBOT|Scooter|AltaVista|IDBot|eStyle|Scrubby|ia_archiver|Sogou web spider|Twitterbot"
+(defparameter *bot-scanner* (create-scanner "google|msnbot|wget|curl|baiduspider|bingbot|rambler|yahoo|AbachoBOT|accoona|AcioRobot|ASPSeek|Dumbot|GeonaBot|Gigabot|Lycos|MSRBOT|Scooter|AltaVista|IDBot|eStyle|Scrubby|ia_archiver|Sogou web spider|Twitterbot|MJ12bot"
                                             :case-insensitive-mode t))
 
 (defparameter *dummy-session* nil)
