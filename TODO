@@ -1,46 +1,63 @@
 soonish:
-- tags
-  - add 'hackery' and 'lisp' tags to fallenfrukt posts
-  - implement 'get-posts-by-tag'
-  - add tag decoration to blog post
-  - add hackery option to rss on both homepage and in rss.lisp
-  - make rss dispatching on tags/categories actually work
-  - default rss channel title and description for fallthrough tags.
-    specialized title and description for main/all and hackery tags.
-- decorate blog listings to be a bit more enticing
-  - list tags
-  - list all
-  - last posts
-  - blog years
-- blog years and amount of posts
-- resize images for small screens through css
-- blog summaries: let all be clickable, add date
-- retouch blog posts with our new features
-- add fallthrough blog-summary and date-published logic
-- when fall-through rules, offer random post/quote
-- add make-comment link and machinery
-- periodically refresh content-cache
-- add saving of conversations
-  read the linked-to post
-- seapup sbcl-bin and add to upstart or whatever du-jour process manager
-- history of input commands, triggerable with 'up' button
+<empty!!>
 
 laterish:
+- transfer image links plus jaded/frukt side-images to new blog if available
+- add fallthrough date-published logic
+- add not .. tag semantics
+- periodically refresh content-cache
 - grovel content dir images and resize for site versions
-- subclass acceptor to use different ssl certificates per domain on same host
 - parse rss/atom for catch-all generator - use cl-rss
 - add other categories besides blog posts
-- transfer image links plus jaded/frukt side-images to new blog if available
 - implement pausing of terminal, in awaitance of ajax content (not yet needed)
 - add conversation tree/standard yes/no, etc blocks
 - error handling of post parsing (atm this will often break)
-- put 'next' button under blog posts. Damn readable blog I have.
-- think of punctuation processing conundrum
 - add user-support
 - searching/indexing of text
-- hunchentoot output feedback to repl when firing form web-page [later me: ?]
+
 
 done:
+v - change the welcome text to use snippets or something in some form
+v - spend some hours making fall-through replies
+v - when fall-through rules, offer random post/quote
+v - make snippets thing work
+v - align images and caption properly in a div
+v - do some performance testing
+v - resize images for small screens through css
+v - history of input commands, triggerable with 'up' button
+v - post dateline lost it's coloring
+v - when plugging comment on post, get the current post instance
+v - add seapup pic at top
+v - send me mail when someone's making a comment
+v - add hackery option to rss on both homepage and in rss.lisp
+v - default rss channel title and description for fallthrough tags.
+    specialized title and description for main/all and hackery tags.
+v - push new comments inline into blog-post, no reparsing
+v - add fallthrough blog-summary logic
+v - change default paragraph css padding
+v - do md in macro, blog links transplant with regex
+v - decorate blog listings to be a bit more enticing
+v - describe blog posts and hackery in the tags
+v - in tag summary, give description of coolest tags
+v - add tag decoration to blog post
+v - add saving of conversations
+v - think of punctuation processing conundrum - thought of it
+v - irrelevant - subclass acceptor to use different ssl certificates per domain on same host
+v - add make-comment link and machinery
+v - refresh blog on comment
+v  - make local object for *blog-posts*, and then assign
+v - handle crawlers
+v - no session info in rss links
+v - fix adding of session strings to links when not needed
+v - iptable rules
+v - seapup sbcl-bin and add to upstart or whatever du-jour process manager - fucking debian sysvinit forever
+v - fix mobile rss whoes - startssl or ask solution
+v - make rss dispatching on tags/categories actually work
+v - blog summaries: let all be clickable, add date - still unsure
+v - blog years and amount of posts
+v  - implement 'get-posts-by-tag'
+v - retouch blog posts with our new features
+v - add 'hackery' and 'lisp' tags to fallenfrukt posts
 v - maybe pre-init static page with content from url, so non-js-ssers can at least
 v - on new page-load, no static txt, but submit 'intro' post
 v - add 'without javascript will not work' text if no javascript available/allowed - no need
