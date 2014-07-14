@@ -178,7 +178,8 @@
                                       :if-does-not-exist :create)
         (when first
           (prin1 (list (remote-addr *request*) (referer) (request-uri *request*)
-                       (host) (user-agent) (when (cookie-in "session") t)) strm))
+                       (host) (user-agent) (when (cookie-in "session") t)) strm)
+          (format strm "~%"))
         (prin1 (list input output) strm)
         (format strm "~%")))))
 
