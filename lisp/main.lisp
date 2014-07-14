@@ -19,7 +19,7 @@
 
 (defclass no-state-session (session)
   ((hunchentoot::session-id     :initform "0:000000")
-   (hunchentoot::session-string :initform "session")
+   (hunchentoot::session-string :initform "dummy")
    (hunchentoot::user-agent     :initform "dummy")
    (hunchentoot::remote-addr    :initform "0.0.0.0")
    (hunchentoot::session-start  :initform "0")
