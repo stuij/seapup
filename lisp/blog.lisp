@@ -423,15 +423,24 @@ And these are the latest posts, as far as I can tell. Have fun I guess.. If they
                                         (format nil "~A(~A)" tag (length posts))))))
     (lrep (format nil (md-pre "My now main blogs; and also my ex-blogs from other web-places which were revamped here for your pleasure:
 
-- [[seapup|blog tag seapup]] - Now posts. About all kinds of random non-hackery things, like rating seas by saltiness, for example - 2014-the future
-- [[awarewolf|blog tag awarewolf]] - Now posts. About the awakening of the Aware Wolf, and other oh-so-hackery things - 2014-the future
-- [[tales-from-the-underbelly|blog tag tales-from-the-underbelly]] - One Laptop Per Child/Nepal stuff, and some travelly/culturally things from other places - 2008-2011
-- [[fallen-frukt|blog tag fallen-frukt]] - Common Lisp programming - 2005-2008
-- [[jaded-puppy|blog tag jaded-puppy]] - Jaded puppy's adventures in Sweden - 2005-2007
+- [[seapup (~A)|blog tag seapup]] - Now posts. About all kinds of random non-hackery things, like rating seas by saltiness, for example - 2014-the future
+- [[awarewolf (~A)|blog tag awarewolf]] - Now posts. About the awakening of the Aware Wolf, and other oh-so-hackery things - 2014-the future
+- [[tales-from-the-underbelly (~A)|blog tag tales-from-the-underbelly]] - One Laptop Per Child/Nepal stuff, and some travelly/culturally things from other places - 2008-2011
+- [[fallen-frukt (~A)|blog tag fallen-frukt]] - Common Lisp programming - 2005-2008
+- [[jaded-puppy (~A)|blog tag jaded-puppy]] - Jaded puppy's adventures in Sweden - 2005-2007
 
 
 and the rest:
- ~{<span class='some-spacing'>~A</span>~^ ~}") tags))))
+ ~{<span class='some-spacing'>~A</span>~^ ~}")
+                  (tag-count "seapup")
+                  (tag-count "awarewolf")
+                  (tag-count "tales-from-the-underbelly")
+                  (tag-count "fallen-frukt")
+                  (tag-count "jaded-puppy")
+                  tags))))
+
+(defun tag-count (tag)
+  (length (get-posts-by-tag tag)))
 
 (defun get-posts-by-tag (tag)
   (if (string-equal tag "all")
