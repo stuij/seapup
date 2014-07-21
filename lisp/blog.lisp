@@ -510,7 +510,7 @@ and the rest:
           (print-blog-date (post-created post))
           (lrep (post-body post))
           (print-comments post)
-          (lrep "Want to comment? Type [[comment|comment]].")))
+          (lrep "Want to comment? Type [[comment|comment]]. Type something else to randomy chat a bit. I won't bite.")))
 
 (defun print-tags (post)
   (lrep (format nil "tags: ~{<span class='right-spacing'>[[~A|blog tag ~:*~A]]</span>~^ ~}" (post-tags post))))
