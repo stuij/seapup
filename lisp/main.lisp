@@ -5,7 +5,7 @@
 (defparameter *last-ssl-acceptor* nil)
 (defparameter *last-session* nil)
 (defparameter *last-request* nil)
-(defparameter *bot-scanner* (create-scanner "google|msnbot|wget|curl|baiduspider|bingbot|rambler|yahoo|AbachoBOT|accoona|AcioRobot|ASPSeek|Dumbot|GeonaBot|Gigabot|Lycos|MSRBOT|Scooter|AltaVista|IDBot|eStyle|Scrubby|ia_archiver|Sogou web spider|Twitterbot|MJ12bot|facebookexternalhit"
+(defparameter *bot-scanner* (create-scanner "google|msnbot|wget|curl|baiduspider|bingbot|rambler|yahoo|AbachoBOT|accoona|AcioRobot|ASPSeek|Dumbot|GeonaBot|Gigabot|Lycos|MSRBOT|Scooter|AltaVista|IDBot|eStyle|Scrubby|ia_archiver|Sogou web spider|Twitterbot|MJ12bot|facebookexternalhit|Tweetmeme"
                                             :case-insensitive-mode t))
 
 (defparameter *dummy-session* nil)
@@ -177,7 +177,7 @@
       (with-output-to-file (strm file :if-exists :append
                                       :if-does-not-exist :create)
         (when first
-          (prin1 (list (referer) (remote-addr *request*) (referer) (request-uri *request*)
+          (prin1 (list (remote-addr *request*) (referer) (request-uri *request*)
                        (host) (user-agent) (when (cookie-in "session") t)) strm)
           (format strm "~%"))
         (prin1 (list input output) strm)
