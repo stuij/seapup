@@ -22,8 +22,8 @@
    (hunchentoot::session-string :initform "dummy")
    (hunchentoot::user-agent     :initform "dummy")
    (hunchentoot::remote-addr    :initform "0.0.0.0")
-   (hunchentoot::session-start  :initform "0")
-   (hunchentoot::last-click     :initform "0")
+   (hunchentoot::session-start  :initform 0)
+   (hunchentoot::last-click     :initform 0)
    (hunchentoot::session-data)))
 
 (defun make-no-state-session-data (session)
