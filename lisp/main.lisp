@@ -33,9 +33,12 @@
           (cons 'context-tree
                 (list (cons 'base-context base-context)))
           (cons 'context-catch-all
-                (list (cons 'base-context
-                            (cons (catch-all-hook-of base-context)
-                                  base-context))))
+                (list
+                 (cons base-context
+                       (make-catch-all
+                        base-context
+                        (catch-all-freq-of base-context)
+                        (catch-all-hook-of base-context)))))
           (cons 'crawler t))))
 
 (defun pup-init ()
