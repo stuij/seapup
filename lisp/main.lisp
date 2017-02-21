@@ -111,7 +111,7 @@
 #- (and) (defun start-buildapp (argv)
            (declare (ignorable argv))
            (teclo:startup :program-name "server" :save-backtrace t :exit-code 1)
-           (start-server)  
+           (start-server)
            (bt:join-thread (hunchentoot::acceptor-process
                             (hunchentoot::acceptor-taskmaster *last-acceptor*))))
 
@@ -122,6 +122,7 @@
   (regex-dispatchers '(;; page callbacks
                        ("^/$" . handle-main)
                        ("^/static.*" . handle-static)
+                       ("^/.well-known.*" . handle-well-known)
                        ("^/ajax.*" . handle-ajax)
                        ("^/feed.*" . handle-feed)
                        ("^/.*" . handle-void))))
@@ -130,10 +131,13 @@
   "You have wiggled yourself into the crack between space and time. And then you fell through. Without wanting to I'm sure. But now you're here.. FOREVER!!")
 
 (defun handle-static ()
-  (handle-static-pup (subseq (request-uri*) 8))) ;; chop off '/static/'
+  (handle-static-pup (subseq (request-uri*) 8) "www/")) ;; chop off '/static/'
 
-(defun handle-static-pup (file)
-  (handle-static-file (merge-pathnames file (cave "www/"))))
+(defun handle-well-known ()
+  (handle-static-pup (subseq (request-uri*) 13) "well-known/")) ;; chop off '/.well-known/'
+
+(defun handle-static-pup (file prefix)
+  (handle-static-file (merge-pathnames file (cave prefix))))
 
 (defun get-locales ()
   (json:encode-json-to-string
